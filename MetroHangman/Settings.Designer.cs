@@ -1,11 +1,16 @@
-﻿namespace MetroHangman
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+using MetroFramework.Components;
+using MetroFramework.Controls;
+
+namespace MetroHangman
 {
     partial class Settings
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -155,13 +160,13 @@
 
         #endregion
 
-        private MetroFramework.Controls.MetroButton btn_Color;
-        private MetroFramework.Controls.MetroButton btn_Disco;
-        private MetroFramework.Controls.MetroButton btn_Statistics;
-        private MetroFramework.Controls.MetroLabel metroLabel1;
-        private MetroFramework.Controls.MetroLabel disco;
-        private MetroFramework.Controls.MetroLabel metroLabel3;
-        private System.Windows.Forms.Timer tmr_Theme;
-        private MetroFramework.Components.MetroStyleManager metroStyleManager1;
+        private MetroButton btn_Color;
+        private MetroButton btn_Disco;
+        private MetroButton btn_Statistics;
+        private MetroLabel metroLabel1;
+        private MetroLabel disco;
+        private MetroLabel metroLabel3;
+        private Timer tmr_Theme;
+        private MetroStyleManager metroStyleManager1;
     }
 }

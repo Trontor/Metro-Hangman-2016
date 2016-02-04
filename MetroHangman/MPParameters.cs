@@ -1,33 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Hangman
+﻿namespace MetroHangman
 {
-    public class MPParameters
+    public class MpParameters
     {
-        private bool param_hide;
-        private bool param_reveal;
-        public bool HideWord
+        public bool HideWord { get; }
+
+        public bool RevealWord { get; }
+
+        public MpParameters(bool hideWord, bool revealWord)
         {
-            get
-            {
-                return param_hide;
-            }
-        }
-        public bool RevealWord
-        {
-            get
-            {
-                return param_reveal;
-            }
-        }
-        public MPParameters(bool hideWord, bool revealWord)
-        {
-            this.param_hide = hideWord;
-            this.param_reveal = revealWord;
+            HideWord = hideWord;
+            RevealWord = revealWord;
         }
     }
 }

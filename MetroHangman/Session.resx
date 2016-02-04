@@ -120,17 +120,14 @@
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btn_showInput.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAELSURBVEhL7ZRhDcIwEIUnAQlIQAJOwAE4AAfgAByAA3AAEpCAA3jfsiOlvCaFhGQ/9pIvWXqv
-        t+tdt2ZQ7zUSM7ERpwzWiOH5WmOxE49K8LKnSmvhklzFsYNn51mJojgqR883kWwqcrHmXnQQtm3OzFqY
-        J2LRwTMi5vZdxJu2IjdBVL4XeYy+Izx5DMjZqmSgMkS1Lg5xEncKaAs8JwspDBMthYvDXCC8Ls5M//oC
-        chdbFIOqadFNuHjM8Kch872gUoGvIYdK1y29prQEonJiePJ9FPQhzK6XJHgdNRFr1clTlX4VJOMrBZcY
-        uBBV4sfl+u64C7zVP7tUtI2eMzCuXAprxGJGg3qppnkCu23aUx5DBj4AAAAASUVORK5CYII=
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAQtJREFUSEvt
+        lGENwjAQhScBCUhAAk7AATgAB+AAHIADcAASkIADeN+yI6W8JoWEZD/2ki9Zeq+36123ZlDvNRIzsRGn
+        DNaI4flaY7ETj0rwsqdKa+GSXMWxg2fnWYmiOCpHzzeRbCpyseZedBC2bc7MWpgnYtHBMyLm9l3Em7Yi
+        N0FUvhd5jL4jPHkMyNmqZKAyRLUuDnESdwpoCzwnCykMEy2Fi8NcILwuzkz/+gJyF1sUg6pp0U24eMzw
+        pyHzvaBSga8hh0rXLb2mtASicmJ48n0U9CHMrpckeB01EWvVyVOVfhUk4ysFlxi4EFXix+X67rgLvNU/
+        u1S0jZ4zMK5cCmvEYkaDeqmmeQK7bdpTHkMGPgAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="styleManager.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAYAEBAAAAAAIABoBAAAZgAAACAgAAAAACAAqBAAAM4EAAAwMAAAAAAgAKglAAB2FQAAQEAAAAAA
@@ -6304,6 +6301,6 @@
 </value>
   </data>
   <metadata name="tmr_Theme.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>289, 17</value>
+    <value>1006, 56</value>
   </metadata>
 </root>

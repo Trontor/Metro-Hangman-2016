@@ -1,22 +1,14 @@
-﻿using MetroFramework;
-using MetroFramework.Forms;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using MetroFramework;
+using MetroFramework.Forms;
 
-namespace Hangman
+namespace MetroHangman
 {
-    public partial class profiles : MetroForm
+    public partial class Profiles : MetroForm
     {
-        string LoggedInAs = Environment.UserName.ToLower();
-        public profiles()
+        public Profiles()
         {
             InitializeComponent();
             LoadStatistics();
@@ -31,7 +23,7 @@ namespace Hangman
 
         private void btn_resetStatistics_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to reset the statistics for this profile?", "Clearance", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+            if (MessageBox.Show("Are you sure you want to reset the statistics for this profile?", "Clearance", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 Profiler.ResetStatistics();
 
             LoadStatistics();
@@ -47,11 +39,11 @@ namespace Hangman
         }
         private void ProcessTick()
         {
-            this.Style = MetroHangman.Properties.Settings.Default.Theme;
+            Style = Properties.Settings.Default.Theme;
             sMgr.Owner = this;
-            sMgr.Style = MetroHangman.Properties.Settings.Default.Theme;
+            sMgr.Style = Properties.Settings.Default.Theme;
 
-            btn_resetStatistics.BackColor = (Color)typeof(MetroColors).GetMethod("get_" + Style.ToString()).Invoke(new MetroColors(), null);
+            btn_resetStatistics.BackColor = (Color)typeof(MetroColors).GetMethod("get_" + Style).Invoke(new MetroColors(), null);
 
         }
     }

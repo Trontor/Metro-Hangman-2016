@@ -5,15 +5,12 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Hangman
+namespace MetroHangman
 {
-    abstract class ThemeContainer154 : ContainerControl
+    internal abstract class ThemeContainer154 : ContainerControl
     {
 
         #region " Initialization "
@@ -25,56 +22,56 @@ namespace Hangman
         {
             SetStyle((ControlStyles)139270, true);
 
-            _ImageSize = Size.Empty;
+            ImageSize = Size.Empty;
             Font = new Font("Verdana", 8);
 
-            MeasureBitmap = new Bitmap(1, 1);
-            MeasureGraphics = Graphics.FromImage(MeasureBitmap);
+            _measureBitmap = new Bitmap(1, 1);
+            _measureGraphics = Graphics.FromImage(_measureBitmap);
 
-            DrawRadialPath = new GraphicsPath();
+            _drawRadialPath = new GraphicsPath();
 
             InvalidateCustimization();
         }
 
         protected override sealed void OnHandleCreated(EventArgs e)
         {
-            if (DoneCreation)
+            if (_doneCreation)
                 InitializeMessages();
 
             InvalidateCustimization();
             ColorHook();
 
-            if (!(_LockWidth == 0))
-                Width = _LockWidth;
-            if (!(_LockHeight == 0))
-                Height = _LockHeight;
-            if (!_ControlMode)
+            if (!(_lockWidth == 0))
+                Width = _lockWidth;
+            if (!(_lockHeight == 0))
+                Height = _lockHeight;
+            if (!_controlMode)
                 base.Dock = DockStyle.Fill;
 
-            Transparent = _Transparent;
-            if (_Transparent && _BackColor)
+            Transparent = _transparent;
+            if (_transparent && _backColor)
                 BackColor = Color.Transparent;
 
             base.OnHandleCreated(e);
         }
 
-        private bool DoneCreation;
+        private bool _doneCreation;
         protected override sealed void OnParentChanged(EventArgs e)
         {
             base.OnParentChanged(e);
 
             if (Parent == null)
                 return;
-            _IsParentForm = Parent is Form;
+            IsParentForm = Parent is Form;
 
-            if (!_ControlMode)
+            if (!_controlMode)
             {
                 InitializeMessages();
 
-                if (_IsParentForm)
+                if (IsParentForm)
                 {
-                    ParentForm.FormBorderStyle = _BorderStyle;
-                    ParentForm.TransparencyKey = _TransparencyKey;
+                    ParentForm.FormBorderStyle = _borderStyle;
+                    ParentForm.TransparencyKey = _transparencyKey;
 
                     if (!DesignMode)
                     {
@@ -86,7 +83,7 @@ namespace Hangman
             }
 
             OnCreation();
-            DoneCreation = true;
+            _doneCreation = true;
             InvalidateTimer();
         }
 
@@ -104,7 +101,7 @@ namespace Hangman
             if (Width == 0 || Height == 0)
                 return;
 
-            if (_Transparent && _ControlMode)
+            if (_transparent && _controlMode)
             {
                 PaintHook();
                 e.Graphics.DrawImage(B, 0, 0);
@@ -122,31 +119,31 @@ namespace Hangman
             base.OnHandleDestroyed(e);
         }
 
-        private bool HasShown;
+        private bool _hasShown;
         private void FormShown(object sender, EventArgs e)
         {
-            if (_ControlMode || HasShown)
+            if (_controlMode || _hasShown)
                 return;
 
-            if (_StartPosition == FormStartPosition.CenterParent || _StartPosition == FormStartPosition.CenterScreen)
+            if (_startPosition == FormStartPosition.CenterParent || _startPosition == FormStartPosition.CenterScreen)
             {
-                Rectangle SB = Screen.PrimaryScreen.Bounds;
-                Rectangle CB = ParentForm.Bounds;
-                ParentForm.Location = new Point(SB.Width / 2 - CB.Width / 2, SB.Height / 2 - CB.Width / 2);
+                Rectangle sb = Screen.PrimaryScreen.Bounds;
+                Rectangle cb = ParentForm.Bounds;
+                ParentForm.Location = new Point(sb.Width / 2 - cb.Width / 2, sb.Height / 2 - cb.Width / 2);
             }
 
-            HasShown = true;
+            _hasShown = true;
         }
 
 
         #region " Size Handling "
 
-        private Rectangle Frame;
+        private Rectangle _frame;
         protected override sealed void OnSizeChanged(EventArgs e)
         {
-            if (_Movable && !_ControlMode)
+            if (Movable && !_controlMode)
             {
-                Frame = new Rectangle(7, 7, Width - 14, _Header - 7);
+                _frame = new Rectangle(7, 7, Width - 14, _header - 7);
             }
 
             InvalidateBitmap();
@@ -157,10 +154,10 @@ namespace Hangman
 
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
-            if (!(_LockWidth == 0))
-                width = _LockWidth;
-            if (!(_LockHeight == 0))
-                height = _LockHeight;
+            if (!(_lockWidth == 0))
+                width = _lockWidth;
+            if (!(_lockHeight == 0))
+                height = _lockHeight;
             base.SetBoundsCore(x, y, width, height, specified);
         }
 
@@ -177,9 +174,9 @@ namespace Hangman
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (!(_IsParentForm && ParentForm.WindowState == FormWindowState.Maximized))
+            if (!(IsParentForm && ParentForm.WindowState == FormWindowState.Maximized))
             {
-                if (_Sizable && !_ControlMode)
+                if (Sizable && !_controlMode)
                     InvalidateMouse();
             }
 
@@ -213,10 +210,10 @@ namespace Hangman
 
             if (GetChildAtPoint(PointToClient(MousePosition)) != null)
             {
-                if (_Sizable && !_ControlMode)
+                if (Sizable && !_controlMode)
                 {
                     Cursor = Cursors.Default;
-                    Previous = 0;
+                    _previous = 0;
                 }
             }
 
@@ -225,39 +222,39 @@ namespace Hangman
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
                 SetState(MouseState.Down);
 
-            if (!(_IsParentForm && ParentForm.WindowState == FormWindowState.Maximized || _ControlMode))
+            if (!(IsParentForm && ParentForm.WindowState == FormWindowState.Maximized || _controlMode))
             {
-                if (_Movable && Frame.Contains(e.Location))
+                if (Movable && _frame.Contains(e.Location))
                 {
                     Capture = false;
-                    WM_LMBUTTONDOWN = true;
-                    DefWndProc(ref Messages[0]);
+                    _wmLmbuttondown = true;
+                    DefWndProc(ref _messages[0]);
                 }
-                else if (_Sizable && !(Previous == 0))
+                else if (Sizable && !(_previous == 0))
                 {
                     Capture = false;
-                    WM_LMBUTTONDOWN = true;
-                    DefWndProc(ref Messages[Previous]);
+                    _wmLmbuttondown = true;
+                    DefWndProc(ref _messages[_previous]);
                 }
             }
 
             base.OnMouseDown(e);
         }
 
-        private bool WM_LMBUTTONDOWN;
+        private bool _wmLmbuttondown;
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
 
-            if (WM_LMBUTTONDOWN && m.Msg == 513)
+            if (_wmLmbuttondown && m.Msg == 513)
             {
-                WM_LMBUTTONDOWN = false;
+                _wmLmbuttondown = false;
 
                 SetState(MouseState.Over);
-                if (!_SmartBounds)
+                if (!SmartBounds)
                     return;
 
                 if (IsParentMdi)
@@ -271,48 +268,48 @@ namespace Hangman
             }
         }
 
-        private Point GetIndexPoint;
-        private bool B1;
-        private bool B2;
-        private bool B3;
-        private bool B4;
+        private Point _getIndexPoint;
+        private bool _b1;
+        private bool _b2;
+        private bool _b3;
+        private bool _b4;
         private int GetIndex()
         {
-            GetIndexPoint = PointToClient(MousePosition);
-            B1 = GetIndexPoint.X < 7;
-            B2 = GetIndexPoint.X > Width - 7;
-            B3 = GetIndexPoint.Y < 7;
-            B4 = GetIndexPoint.Y > Height - 7;
+            _getIndexPoint = PointToClient(MousePosition);
+            _b1 = _getIndexPoint.X < 7;
+            _b2 = _getIndexPoint.X > Width - 7;
+            _b3 = _getIndexPoint.Y < 7;
+            _b4 = _getIndexPoint.Y > Height - 7;
 
-            if (B1 && B3)
+            if (_b1 && _b3)
                 return 4;
-            if (B1 && B4)
+            if (_b1 && _b4)
                 return 7;
-            if (B2 && B3)
+            if (_b2 && _b3)
                 return 5;
-            if (B2 && B4)
+            if (_b2 && _b4)
                 return 8;
-            if (B1)
+            if (_b1)
                 return 1;
-            if (B2)
+            if (_b2)
                 return 2;
-            if (B3)
+            if (_b3)
                 return 3;
-            if (B4)
+            if (_b4)
                 return 6;
             return 0;
         }
 
-        private int Current;
-        private int Previous;
+        private int _current;
+        private int _previous;
         private void InvalidateMouse()
         {
-            Current = GetIndex();
-            if (Current == Previous)
+            _current = GetIndex();
+            if (_current == _previous)
                 return;
 
-            Previous = Current;
-            switch (Previous)
+            _previous = _current;
+            switch (_previous)
             {
                 case 0:
                     Cursor = Cursors.Default;
@@ -336,13 +333,13 @@ namespace Hangman
             }
         }
 
-        private Message[] Messages = new Message[9];
+        private readonly Message[] _messages = new Message[9];
         private void InitializeMessages()
         {
-            Messages[0] = Message.Create(Parent.Handle, 161, new IntPtr(2), IntPtr.Zero);
+            _messages[0] = Message.Create(Parent.Handle, 161, new IntPtr(2), IntPtr.Zero);
             for (int I = 1; I <= 8; I++)
             {
-                Messages[I] = Message.Create(Parent.Handle, 161, new IntPtr(I + 9), IntPtr.Zero);
+                _messages[I] = Message.Create(Parent.Handle, 161, new IntPtr(I + 9), IntPtr.Zero);
             }
         }
 
@@ -353,23 +350,23 @@ namespace Hangman
             if (Parent.Height > bounds.Height)
                 Parent.Height = bounds.Height;
 
-            int X = Parent.Location.X;
-            int Y = Parent.Location.Y;
+            int x = Parent.Location.X;
+            int y = Parent.Location.Y;
 
-            if (X < bounds.X)
-                X = bounds.X;
-            if (Y < bounds.Y)
-                Y = bounds.Y;
+            if (x < bounds.X)
+                x = bounds.X;
+            if (y < bounds.Y)
+                y = bounds.Y;
 
-            int Width = bounds.X + bounds.Width;
-            int Height = bounds.Y + bounds.Height;
+            int width = bounds.X + bounds.Width;
+            int height = bounds.Y + bounds.Height;
 
-            if (X + Parent.Width > Width)
-                X = Width - Parent.Width;
-            if (Y + Parent.Height > Height)
-                Y = Height - Parent.Height;
+            if (x + Parent.Width > width)
+                x = width - Parent.Width;
+            if (y + Parent.Height > height)
+                y = height - Parent.Height;
 
-            Parent.Location = new Point(X, Y);
+            Parent.Location = new Point(x, y);
         }
 
         #endregion
@@ -382,13 +379,13 @@ namespace Hangman
             get { return base.Dock; }
             set
             {
-                if (!_ControlMode)
+                if (!_controlMode)
                     return;
                 base.Dock = value;
             }
         }
 
-        private bool _BackColor;
+        private bool _backColor;
         [Category("Misc")]
         public override Color BackColor
         {
@@ -398,16 +395,16 @@ namespace Hangman
                 if (value == base.BackColor)
                     return;
 
-                if (!IsHandleCreated && _ControlMode && value == Color.Transparent)
+                if (!IsHandleCreated && _controlMode && value == Color.Transparent)
                 {
-                    _BackColor = true;
+                    _backColor = true;
                     return;
                 }
 
                 base.BackColor = value;
                 if (Parent != null)
                 {
-                    if (!_ControlMode)
+                    if (!_controlMode)
                         Parent.BackColor = value;
                     ColorHook();
                 }
@@ -479,44 +476,28 @@ namespace Hangman
 
         #region " Public Properties "
 
-        private bool _SmartBounds = true;
-        public bool SmartBounds
-        {
-            get { return _SmartBounds; }
-            set { _SmartBounds = value; }
-        }
+        public bool SmartBounds { get; set; } = true;
 
-        private bool _Movable = true;
-        public bool Movable
-        {
-            get { return _Movable; }
-            set { _Movable = value; }
-        }
+        public bool Movable { get; set; } = true;
 
-        private bool _Sizable = true;
-        public bool Sizable
-        {
-            get { return _Sizable; }
-            set { _Sizable = value; }
-        }
+        public bool Sizable { get; set; } = true;
 
-        private Color _TransparencyKey;
+        private Color _transparencyKey;
         public Color TransparencyKey
         {
             get
             {
-                if (_IsParentForm && !_ControlMode)
+                if (IsParentForm && !_controlMode)
                     return ParentForm.TransparencyKey;
-                else
-                    return _TransparencyKey;
+                return _transparencyKey;
             }
             set
             {
-                if (value == _TransparencyKey)
+                if (value == _transparencyKey)
                     return;
-                _TransparencyKey = value;
+                _transparencyKey = value;
 
-                if (_IsParentForm && !_ControlMode)
+                if (IsParentForm && !_controlMode)
                 {
                     ParentForm.TransparencyKey = value;
                     ColorHook();
@@ -524,21 +505,20 @@ namespace Hangman
             }
         }
 
-        private FormBorderStyle _BorderStyle;
+        private FormBorderStyle _borderStyle;
         public FormBorderStyle BorderStyle
         {
             get
             {
-                if (_IsParentForm && !_ControlMode)
+                if (IsParentForm && !_controlMode)
                     return ParentForm.FormBorderStyle;
-                else
-                    return _BorderStyle;
+                return _borderStyle;
             }
             set
             {
-                _BorderStyle = value;
+                _borderStyle = value;
 
-                if (_IsParentForm && !_ControlMode)
+                if (IsParentForm && !_controlMode)
                 {
                     ParentForm.FormBorderStyle = value;
 
@@ -551,75 +531,74 @@ namespace Hangman
             }
         }
 
-        private FormStartPosition _StartPosition;
+        private FormStartPosition _startPosition;
         public FormStartPosition StartPosition
         {
             get
             {
-                if (_IsParentForm && !_ControlMode)
+                if (IsParentForm && !_controlMode)
                     return ParentForm.StartPosition;
-                else
-                    return _StartPosition;
+                return _startPosition;
             }
             set
             {
-                _StartPosition = value;
+                _startPosition = value;
 
-                if (_IsParentForm && !_ControlMode)
+                if (IsParentForm && !_controlMode)
                 {
                     ParentForm.StartPosition = value;
                 }
             }
         }
 
-        private bool _NoRounding;
+        private bool _noRounding;
         public bool NoRounding
         {
-            get { return _NoRounding; }
+            get { return _noRounding; }
             set
             {
-                _NoRounding = value;
+                _noRounding = value;
                 Invalidate();
             }
         }
 
-        private Image _Image;
+        private Image _image;
         public Image Image
         {
-            get { return _Image; }
+            get { return _image; }
             set
             {
                 if (value == null)
-                    _ImageSize = Size.Empty;
+                    ImageSize = Size.Empty;
                 else
-                    _ImageSize = value.Size;
+                    ImageSize = value.Size;
 
-                _Image = value;
+                _image = value;
                 Invalidate();
             }
         }
 
-        private Dictionary<string, Color> Items = new Dictionary<string, Color>();
+        private readonly Dictionary<string, Color> _items = new Dictionary<string, Color>();
         public Bloom[] Colors
         {
             get
             {
                 List<Bloom> T = new List<Bloom>();
-                Dictionary<string, Color>.Enumerator E = Items.GetEnumerator();
+                Dictionary<string, Color>.Enumerator e = _items.GetEnumerator();
 
-                while (E.MoveNext())
+                while (e.MoveNext())
                 {
-                    T.Add(new Bloom(E.Current.Key, E.Current.Value));
+                    T.Add(new Bloom(e.Current.Key, e.Current.Value));
                 }
 
                 return T.ToArray();
             }
             set
             {
-                foreach (Bloom B in value)
+                foreach (Bloom b in value)
                 {
-                    if (Items.ContainsKey(B.Name))
-                        Items[B.Name] = B.Value;
+                    if (_items.ContainsKey(b.Name))
+                        _items[b.Name] = b.Value;
                 }
 
                 InvalidateCustimization();
@@ -628,24 +607,24 @@ namespace Hangman
             }
         }
 
-        private string _Customization;
+        private string _customization;
         public string Customization
         {
-            get { return _Customization; }
+            get { return _customization; }
             set
             {
-                if (value == _Customization)
+                if (value == _customization)
                     return;
 
-                byte[] Data = null;
-                Bloom[] Items = Colors;
+                byte[] data = null;
+                Bloom[] items = Colors;
 
                 try
                 {
-                    Data = Convert.FromBase64String(value);
-                    for (int I = 0; I <= Items.Length - 1; I++)
+                    data = Convert.FromBase64String(value);
+                    for (int I = 0; I <= items.Length - 1; I++)
                     {
-                        Items[I].Value = Color.FromArgb(BitConverter.ToInt32(Data, I * 4));
+                        items[I].Value = Color.FromArgb(BitConverter.ToInt32(data, I * 4));
                     }
                 }
                 catch
@@ -653,22 +632,22 @@ namespace Hangman
                     return;
                 }
 
-                _Customization = value;
+                _customization = value;
 
-                Colors = Items;
+                Colors = items;
                 ColorHook();
                 Invalidate();
             }
         }
 
-        private bool _Transparent;
+        private bool _transparent;
         public bool Transparent
         {
-            get { return _Transparent; }
+            get { return _transparent; }
             set
             {
-                _Transparent = value;
-                if (!(IsHandleCreated || _ControlMode))
+                _transparent = value;
+                if (!(IsHandleCreated || _controlMode))
                     return;
 
                 if (!value && !(BackColor.A == 255))
@@ -688,17 +667,9 @@ namespace Hangman
 
         #region " Private Properties "
 
-        private Size _ImageSize;
-        protected Size ImageSize
-        {
-            get { return _ImageSize; }
-        }
+        protected Size ImageSize { get; private set; }
 
-        private bool _IsParentForm;
-        protected bool IsParentForm
-        {
-            get { return _IsParentForm; }
-        }
+        protected bool IsParentForm { get; private set; }
 
         protected bool IsParentMdi
         {
@@ -710,56 +681,56 @@ namespace Hangman
             }
         }
 
-        private int _LockWidth;
+        private int _lockWidth;
         protected int LockWidth
         {
-            get { return _LockWidth; }
+            get { return _lockWidth; }
             set
             {
-                _LockWidth = value;
+                _lockWidth = value;
                 if (!(LockWidth == 0) && IsHandleCreated)
                     Width = LockWidth;
             }
         }
 
-        private int _LockHeight;
+        private int _lockHeight;
         protected int LockHeight
         {
-            get { return _LockHeight; }
+            get { return _lockHeight; }
             set
             {
-                _LockHeight = value;
+                _lockHeight = value;
                 if (!(LockHeight == 0) && IsHandleCreated)
                     Height = LockHeight;
             }
         }
 
-        private int _Header = 24;
+        private int _header = 24;
         protected int Header
         {
-            get { return _Header; }
+            get { return _header; }
             set
             {
-                _Header = value;
+                _header = value;
 
-                if (!_ControlMode)
+                if (!_controlMode)
                 {
-                    Frame = new Rectangle(7, 7, Width - 14, value - 7);
+                    _frame = new Rectangle(7, 7, Width - 14, value - 7);
                     Invalidate();
                 }
             }
         }
 
-        private bool _ControlMode;
+        private bool _controlMode;
         protected bool ControlMode
         {
-            get { return _ControlMode; }
+            get { return _controlMode; }
             set
             {
-                _ControlMode = value;
+                _controlMode = value;
 
-                Transparent = _Transparent;
-                if (_Transparent && _BackColor)
+                Transparent = _transparent;
+                if (_transparent && _backColor)
                     BackColor = Color.Transparent;
 
                 InvalidateBitmap();
@@ -767,13 +738,13 @@ namespace Hangman
             }
         }
 
-        private bool _IsAnimated;
+        private bool _isAnimated;
         protected bool IsAnimated
         {
-            get { return _IsAnimated; }
+            get { return _isAnimated; }
             set
             {
-                _IsAnimated = value;
+                _isAnimated = value;
                 InvalidateTimer();
             }
         }
@@ -785,29 +756,29 @@ namespace Hangman
 
         protected Pen GetPen(string name)
         {
-            return new Pen(Items[name]);
+            return new Pen(_items[name]);
         }
         protected Pen GetPen(string name, float width)
         {
-            return new Pen(Items[name], width);
+            return new Pen(_items[name], width);
         }
 
         protected SolidBrush GetBrush(string name)
         {
-            return new SolidBrush(Items[name]);
+            return new SolidBrush(_items[name]);
         }
 
         protected Color GetColor(string name)
         {
-            return Items[name];
+            return _items[name];
         }
 
         protected void SetColor(string name, Color value)
         {
-            if (Items.ContainsKey(name))
-                Items[name] = value;
+            if (_items.ContainsKey(name))
+                _items[name] = value;
             else
-                Items.Add(name, value);
+                _items.Add(name, value);
         }
         protected void SetColor(string name, byte r, byte g, byte b)
         {
@@ -824,7 +795,7 @@ namespace Hangman
 
         private void InvalidateBitmap()
         {
-            if (_Transparent && _ControlMode)
+            if (_transparent && _controlMode)
             {
                 if (Width == 0 || Height == 0)
                     return;
@@ -840,23 +811,23 @@ namespace Hangman
 
         private void InvalidateCustimization()
         {
-            MemoryStream M = new MemoryStream(Items.Count * 4);
+            MemoryStream m = new MemoryStream(_items.Count * 4);
 
-            foreach (Bloom B in Colors)
+            foreach (Bloom b in Colors)
             {
-                M.Write(BitConverter.GetBytes(B.Value.ToArgb()), 0, 4);
+                m.Write(BitConverter.GetBytes(b.Value.ToArgb()), 0, 4);
             }
 
-            M.Close();
-            _Customization = Convert.ToBase64String(M.ToArray());
+            m.Close();
+            _customization = Convert.ToBase64String(m.ToArray());
         }
 
         private void InvalidateTimer()
         {
-            if (DesignMode || !DoneCreation)
+            if (DesignMode || !_doneCreation)
                 return;
 
-            if (_IsAnimated)
+            if (_isAnimated)
             {
                 ThemeShare.AddAnimationCallback(DoAnimation);
             }
@@ -887,25 +858,25 @@ namespace Hangman
 
         #region " Offset "
 
-        private Rectangle OffsetReturnRectangle;
+        private Rectangle _offsetReturnRectangle;
         protected Rectangle Offset(Rectangle r, int amount)
         {
-            OffsetReturnRectangle = new Rectangle(r.X + amount, r.Y + amount, r.Width - (amount * 2), r.Height - (amount * 2));
-            return OffsetReturnRectangle;
+            _offsetReturnRectangle = new Rectangle(r.X + amount, r.Y + amount, r.Width - amount * 2, r.Height - amount * 2);
+            return _offsetReturnRectangle;
         }
 
-        private Size OffsetReturnSize;
+        private Size _offsetReturnSize;
         protected Size Offset(Size s, int amount)
         {
-            OffsetReturnSize = new Size(s.Width + amount, s.Height + amount);
-            return OffsetReturnSize;
+            _offsetReturnSize = new Size(s.Width + amount, s.Height + amount);
+            return _offsetReturnSize;
         }
 
-        private Point OffsetReturnPoint;
+        private Point _offsetReturnPoint;
         protected Point Offset(Point p, int amount)
         {
-            OffsetReturnPoint = new Point(p.X + amount, p.Y + amount);
-            return OffsetReturnPoint;
+            _offsetReturnPoint = new Point(p.X + amount, p.Y + amount);
+            return _offsetReturnPoint;
         }
 
         #endregion
@@ -913,16 +884,16 @@ namespace Hangman
         #region " Center "
 
 
-        private Point CenterReturn;
+        private Point _centerReturn;
         protected Point Center(Rectangle p, Rectangle c)
         {
-            CenterReturn = new Point((p.Width / 2 - c.Width / 2) + p.X + c.X, (p.Height / 2 - c.Height / 2) + p.Y + c.Y);
-            return CenterReturn;
+            _centerReturn = new Point(p.Width / 2 - c.Width / 2 + p.X + c.X, p.Height / 2 - c.Height / 2 + p.Y + c.Y);
+            return _centerReturn;
         }
         protected Point Center(Rectangle p, Size c)
         {
-            CenterReturn = new Point((p.Width / 2 - c.Width / 2) + p.X, (p.Height / 2 - c.Height / 2) + p.Y);
-            return CenterReturn;
+            _centerReturn = new Point(p.Width / 2 - c.Width / 2 + p.X, p.Height / 2 - c.Height / 2 + p.Y);
+            return _centerReturn;
         }
 
         protected Point Center(Rectangle child)
@@ -945,29 +916,29 @@ namespace Hangman
 
         protected Point Center(int pWidth, int pHeight, int cWidth, int cHeight)
         {
-            CenterReturn = new Point(pWidth / 2 - cWidth / 2, pHeight / 2 - cHeight / 2);
-            return CenterReturn;
+            _centerReturn = new Point(pWidth / 2 - cWidth / 2, pHeight / 2 - cHeight / 2);
+            return _centerReturn;
         }
 
         #endregion
 
         #region " Measure "
 
-        private Bitmap MeasureBitmap;
+        private readonly Bitmap _measureBitmap;
 
-        private Graphics MeasureGraphics;
+        private readonly Graphics _measureGraphics;
         protected Size Measure()
         {
-            lock (MeasureGraphics)
+            lock (_measureGraphics)
             {
-                return MeasureGraphics.MeasureString(Text, Font, Width).ToSize();
+                return _measureGraphics.MeasureString(Text, Font, Width).ToSize();
             }
         }
         protected Size Measure(string text)
         {
-            lock (MeasureGraphics)
+            lock (_measureGraphics)
             {
-                return MeasureGraphics.MeasureString(text, Font, Width).ToSize();
+                return _measureGraphics.MeasureString(text, Font, Width).ToSize();
             }
         }
 
@@ -977,17 +948,17 @@ namespace Hangman
         #region " DrawPixel "
 
 
-        private SolidBrush DrawPixelBrush;
+        private SolidBrush _drawPixelBrush;
         protected void DrawPixel(Color c1, int x, int y)
         {
-            if (_Transparent)
+            if (_transparent)
             {
                 B.SetPixel(x, y, c1);
             }
             else
             {
-                DrawPixelBrush = new SolidBrush(c1);
-                G.FillRectangle(DrawPixelBrush, x, y, 1, 1);
+                _drawPixelBrush = new SolidBrush(c1);
+                G.FillRectangle(_drawPixelBrush, x, y, 1, 1);
             }
         }
 
@@ -996,7 +967,7 @@ namespace Hangman
         #region " DrawCorners "
 
 
-        private SolidBrush DrawCornersBrush;
+        private SolidBrush _drawCornersBrush;
         protected void DrawCorners(Color c1, int offset)
         {
             DrawCorners(c1, 0, 0, Width, Height, offset);
@@ -1007,7 +978,7 @@ namespace Hangman
         }
         protected void DrawCorners(Color c1, int x, int y, int width, int height, int offset)
         {
-            DrawCorners(c1, x + offset, y + offset, width - (offset * 2), height - (offset * 2));
+            DrawCorners(c1, x + offset, y + offset, width - offset * 2, height - offset * 2);
         }
 
         protected void DrawCorners(Color c1)
@@ -1020,10 +991,10 @@ namespace Hangman
         }
         protected void DrawCorners(Color c1, int x, int y, int width, int height)
         {
-            if (_NoRounding)
+            if (_noRounding)
                 return;
 
-            if (_Transparent)
+            if (_transparent)
             {
                 B.SetPixel(x, y, c1);
                 B.SetPixel(x + (width - 1), y, c1);
@@ -1032,11 +1003,11 @@ namespace Hangman
             }
             else
             {
-                DrawCornersBrush = new SolidBrush(c1);
-                G.FillRectangle(DrawCornersBrush, x, y, 1, 1);
-                G.FillRectangle(DrawCornersBrush, x + (width - 1), y, 1, 1);
-                G.FillRectangle(DrawCornersBrush, x, y + (height - 1), 1, 1);
-                G.FillRectangle(DrawCornersBrush, x + (width - 1), y + (height - 1), 1, 1);
+                _drawCornersBrush = new SolidBrush(c1);
+                G.FillRectangle(_drawCornersBrush, x, y, 1, 1);
+                G.FillRectangle(_drawCornersBrush, x + (width - 1), y, 1, 1);
+                G.FillRectangle(_drawCornersBrush, x, y + (height - 1), 1, 1);
+                G.FillRectangle(_drawCornersBrush, x + (width - 1), y + (height - 1), 1, 1);
             }
         }
 
@@ -1054,7 +1025,7 @@ namespace Hangman
         }
         protected void DrawBorders(Pen p1, int x, int y, int width, int height, int offset)
         {
-            DrawBorders(p1, x + offset, y + offset, width - (offset * 2), height - (offset * 2));
+            DrawBorders(p1, x + offset, y + offset, width - offset * 2, height - offset * 2);
         }
 
         protected void DrawBorders(Pen p1)
@@ -1074,9 +1045,9 @@ namespace Hangman
 
         #region " DrawText "
 
-        private Point DrawTextPoint;
+        private Point _drawTextPoint;
 
-        private Size DrawTextSize;
+        private Size _drawTextSize;
         protected void DrawText(Brush b1, HorizontalAlignment a, int x, int y)
         {
             DrawText(b1, Text, a, x, y);
@@ -1086,19 +1057,19 @@ namespace Hangman
             if (text.Length == 0)
                 return;
 
-            DrawTextSize = Measure(text);
-            DrawTextPoint = new Point(Width / 2 - DrawTextSize.Width / 2, Header / 2 - DrawTextSize.Height / 2);
+            _drawTextSize = Measure(text);
+            _drawTextPoint = new Point(Width / 2 - _drawTextSize.Width / 2, Header / 2 - _drawTextSize.Height / 2);
 
             switch (a)
             {
                 case HorizontalAlignment.Left:
-                    G.DrawString(text, Font, b1, x, DrawTextPoint.Y + y);
+                    G.DrawString(text, Font, b1, x, _drawTextPoint.Y + y);
                     break;
                 case HorizontalAlignment.Center:
-                    G.DrawString(text, Font, b1, DrawTextPoint.X + x, DrawTextPoint.Y + y);
+                    G.DrawString(text, Font, b1, _drawTextPoint.X + x, _drawTextPoint.Y + y);
                     break;
                 case HorizontalAlignment.Right:
-                    G.DrawString(text, Font, b1, Width - DrawTextSize.Width - x, DrawTextPoint.Y + y);
+                    G.DrawString(text, Font, b1, Width - _drawTextSize.Width - x, _drawTextPoint.Y + y);
                     break;
             }
         }
@@ -1121,38 +1092,38 @@ namespace Hangman
         #region " DrawImage "
 
 
-        private Point DrawImagePoint;
+        private Point _drawImagePoint;
         protected void DrawImage(HorizontalAlignment a, int x, int y)
         {
-            DrawImage(_Image, a, x, y);
+            DrawImage(_image, a, x, y);
         }
         protected void DrawImage(Image image, HorizontalAlignment a, int x, int y)
         {
             if (image == null)
                 return;
-            DrawImagePoint = new Point(Width / 2 - image.Width / 2, Header / 2 - image.Height / 2);
+            _drawImagePoint = new Point(Width / 2 - image.Width / 2, Header / 2 - image.Height / 2);
 
             switch (a)
             {
                 case HorizontalAlignment.Left:
-                    G.DrawImage(image, x, DrawImagePoint.Y + y, image.Width, image.Height);
+                    G.DrawImage(image, x, _drawImagePoint.Y + y, image.Width, image.Height);
                     break;
                 case HorizontalAlignment.Center:
-                    G.DrawImage(image, DrawImagePoint.X + x, DrawImagePoint.Y + y, image.Width, image.Height);
+                    G.DrawImage(image, _drawImagePoint.X + x, _drawImagePoint.Y + y, image.Width, image.Height);
                     break;
                 case HorizontalAlignment.Right:
-                    G.DrawImage(image, Width - image.Width - x, DrawImagePoint.Y + y, image.Width, image.Height);
+                    G.DrawImage(image, Width - image.Width - x, _drawImagePoint.Y + y, image.Width, image.Height);
                     break;
             }
         }
 
         protected void DrawImage(Point p1)
         {
-            DrawImage(_Image, p1.X, p1.Y);
+            DrawImage(_image, p1.X, p1.Y);
         }
         protected void DrawImage(int x, int y)
         {
-            DrawImage(_Image, x, y);
+            DrawImage(_image, x, y);
         }
 
         protected void DrawImage(Image image, Point p1)
@@ -1170,79 +1141,79 @@ namespace Hangman
 
         #region " DrawGradient "
 
-        private LinearGradientBrush DrawGradientBrush;
+        private LinearGradientBrush _drawGradientBrush;
 
-        private Rectangle DrawGradientRectangle;
+        private Rectangle _drawGradientRectangle;
         protected void DrawGradient(ColorBlend blend, int x, int y, int width, int height)
         {
-            DrawGradientRectangle = new Rectangle(x, y, width, height);
-            DrawGradient(blend, DrawGradientRectangle);
+            _drawGradientRectangle = new Rectangle(x, y, width, height);
+            DrawGradient(blend, _drawGradientRectangle);
         }
         protected void DrawGradient(ColorBlend blend, int x, int y, int width, int height, float angle)
         {
-            DrawGradientRectangle = new Rectangle(x, y, width, height);
-            DrawGradient(blend, DrawGradientRectangle, angle);
+            _drawGradientRectangle = new Rectangle(x, y, width, height);
+            DrawGradient(blend, _drawGradientRectangle, angle);
         }
 
         protected void DrawGradient(ColorBlend blend, Rectangle r)
         {
-            DrawGradientBrush = new LinearGradientBrush(r, Color.Empty, Color.Empty, 90f);
-            DrawGradientBrush.InterpolationColors = blend;
-            G.FillRectangle(DrawGradientBrush, r);
+            _drawGradientBrush = new LinearGradientBrush(r, Color.Empty, Color.Empty, 90f);
+            _drawGradientBrush.InterpolationColors = blend;
+            G.FillRectangle(_drawGradientBrush, r);
         }
         protected void DrawGradient(ColorBlend blend, Rectangle r, float angle)
         {
-            DrawGradientBrush = new LinearGradientBrush(r, Color.Empty, Color.Empty, angle);
-            DrawGradientBrush.InterpolationColors = blend;
-            G.FillRectangle(DrawGradientBrush, r);
+            _drawGradientBrush = new LinearGradientBrush(r, Color.Empty, Color.Empty, angle);
+            _drawGradientBrush.InterpolationColors = blend;
+            G.FillRectangle(_drawGradientBrush, r);
         }
 
 
         protected void DrawGradient(Color c1, Color c2, int x, int y, int width, int height)
         {
-            DrawGradientRectangle = new Rectangle(x, y, width, height);
-            DrawGradient(c1, c2, DrawGradientRectangle);
+            _drawGradientRectangle = new Rectangle(x, y, width, height);
+            DrawGradient(c1, c2, _drawGradientRectangle);
         }
         protected void DrawGradient(Color c1, Color c2, int x, int y, int width, int height, float angle)
         {
-            DrawGradientRectangle = new Rectangle(x, y, width, height);
-            DrawGradient(c1, c2, DrawGradientRectangle, angle);
+            _drawGradientRectangle = new Rectangle(x, y, width, height);
+            DrawGradient(c1, c2, _drawGradientRectangle, angle);
         }
 
         protected void DrawGradient(Color c1, Color c2, Rectangle r)
         {
-            DrawGradientBrush = new LinearGradientBrush(r, c1, c2, 90f);
-            G.FillRectangle(DrawGradientBrush, r);
+            _drawGradientBrush = new LinearGradientBrush(r, c1, c2, 90f);
+            G.FillRectangle(_drawGradientBrush, r);
         }
         protected void DrawGradient(Color c1, Color c2, Rectangle r, float angle)
         {
-            DrawGradientBrush = new LinearGradientBrush(r, c1, c2, angle);
-            G.FillRectangle(DrawGradientBrush, r);
+            _drawGradientBrush = new LinearGradientBrush(r, c1, c2, angle);
+            G.FillRectangle(_drawGradientBrush, r);
         }
 
         #endregion
 
         #region " DrawRadial "
 
-        private GraphicsPath DrawRadialPath;
-        private PathGradientBrush DrawRadialBrush1;
-        private LinearGradientBrush DrawRadialBrush2;
+        private readonly GraphicsPath _drawRadialPath;
+        private PathGradientBrush _drawRadialBrush1;
+        private LinearGradientBrush _drawRadialBrush2;
 
-        private Rectangle DrawRadialRectangle;
+        private Rectangle _drawRadialRectangle;
         public void DrawRadial(ColorBlend blend, int x, int y, int width, int height)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(blend, DrawRadialRectangle, width / 2, height / 2);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(blend, _drawRadialRectangle, width / 2, height / 2);
         }
         public void DrawRadial(ColorBlend blend, int x, int y, int width, int height, Point center)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(blend, DrawRadialRectangle, center.X, center.Y);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(blend, _drawRadialRectangle, center.X, center.Y);
         }
         public void DrawRadial(ColorBlend blend, int x, int y, int width, int height, int cx, int cy)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(blend, DrawRadialRectangle, cx, cy);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(blend, _drawRadialRectangle, cx, cy);
         }
 
         public void DrawRadial(ColorBlend blend, Rectangle r)
@@ -1255,75 +1226,75 @@ namespace Hangman
         }
         public void DrawRadial(ColorBlend blend, Rectangle r, int cx, int cy)
         {
-            DrawRadialPath.Reset();
-            DrawRadialPath.AddEllipse(r.X, r.Y, r.Width - 1, r.Height - 1);
+            _drawRadialPath.Reset();
+            _drawRadialPath.AddEllipse(r.X, r.Y, r.Width - 1, r.Height - 1);
 
-            DrawRadialBrush1 = new PathGradientBrush(DrawRadialPath);
-            DrawRadialBrush1.CenterPoint = new Point(r.X + cx, r.Y + cy);
-            DrawRadialBrush1.InterpolationColors = blend;
+            _drawRadialBrush1 = new PathGradientBrush(_drawRadialPath);
+            _drawRadialBrush1.CenterPoint = new Point(r.X + cx, r.Y + cy);
+            _drawRadialBrush1.InterpolationColors = blend;
 
             if (G.SmoothingMode == SmoothingMode.AntiAlias)
             {
-                G.FillEllipse(DrawRadialBrush1, r.X + 1, r.Y + 1, r.Width - 3, r.Height - 3);
+                G.FillEllipse(_drawRadialBrush1, r.X + 1, r.Y + 1, r.Width - 3, r.Height - 3);
             }
             else
             {
-                G.FillEllipse(DrawRadialBrush1, r);
+                G.FillEllipse(_drawRadialBrush1, r);
             }
         }
 
 
         protected void DrawRadial(Color c1, Color c2, int x, int y, int width, int height)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(c1, c2, DrawGradientRectangle);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(c1, c2, _drawGradientRectangle);
         }
         protected void DrawRadial(Color c1, Color c2, int x, int y, int width, int height, float angle)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(c1, c2, DrawGradientRectangle, angle);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(c1, c2, _drawGradientRectangle, angle);
         }
 
         protected void DrawRadial(Color c1, Color c2, Rectangle r)
         {
-            DrawRadialBrush2 = new LinearGradientBrush(r, c1, c2, 90f);
-            G.FillRectangle(DrawGradientBrush, r);
+            _drawRadialBrush2 = new LinearGradientBrush(r, c1, c2, 90f);
+            G.FillRectangle(_drawGradientBrush, r);
         }
         protected void DrawRadial(Color c1, Color c2, Rectangle r, float angle)
         {
-            DrawRadialBrush2 = new LinearGradientBrush(r, c1, c2, angle);
-            G.FillEllipse(DrawGradientBrush, r);
+            _drawRadialBrush2 = new LinearGradientBrush(r, c1, c2, angle);
+            G.FillEllipse(_drawGradientBrush, r);
         }
 
         #endregion
 
         #region " CreateRound "
 
-        private GraphicsPath CreateRoundPath;
+        private GraphicsPath _createRoundPath;
 
-        private Rectangle CreateRoundRectangle;
+        private Rectangle _createRoundRectangle;
         public GraphicsPath CreateRound(int x, int y, int width, int height, int slope)
         {
-            CreateRoundRectangle = new Rectangle(x, y, width, height);
-            return CreateRound(CreateRoundRectangle, slope);
+            _createRoundRectangle = new Rectangle(x, y, width, height);
+            return CreateRound(_createRoundRectangle, slope);
         }
 
         public GraphicsPath CreateRound(Rectangle r, int slope)
         {
-            CreateRoundPath = new GraphicsPath(FillMode.Winding);
-            CreateRoundPath.AddArc(r.X, r.Y, slope, slope, 180f, 90f);
-            CreateRoundPath.AddArc(r.Right - slope, r.Y, slope, slope, 270f, 90f);
-            CreateRoundPath.AddArc(r.Right - slope, r.Bottom - slope, slope, slope, 0f, 90f);
-            CreateRoundPath.AddArc(r.X, r.Bottom - slope, slope, slope, 90f, 90f);
-            CreateRoundPath.CloseFigure();
-            return CreateRoundPath;
+            _createRoundPath = new GraphicsPath(FillMode.Winding);
+            _createRoundPath.AddArc(r.X, r.Y, slope, slope, 180f, 90f);
+            _createRoundPath.AddArc(r.Right - slope, r.Y, slope, slope, 270f, 90f);
+            _createRoundPath.AddArc(r.Right - slope, r.Bottom - slope, slope, slope, 0f, 90f);
+            _createRoundPath.AddArc(r.X, r.Bottom - slope, slope, slope, 90f, 90f);
+            _createRoundPath.CloseFigure();
+            return _createRoundPath;
         }
 
         #endregion
 
     }
 
-    abstract class ThemeControl154 : Control
+    internal abstract class ThemeControl154 : Control
     {
 
 
@@ -1336,13 +1307,13 @@ namespace Hangman
         {
             SetStyle((ControlStyles)139270, true);
 
-            _ImageSize = Size.Empty;
+            ImageSize = Size.Empty;
             Font = new Font("Verdana", 8);
 
-            MeasureBitmap = new Bitmap(1, 1);
-            MeasureGraphics = Graphics.FromImage(MeasureBitmap);
+            _measureBitmap = new Bitmap(1, 1);
+            _measureGraphics = Graphics.FromImage(_measureBitmap);
 
-            DrawRadialPath = new GraphicsPath();
+            _drawRadialPath = new GraphicsPath();
 
             InvalidateCustimization();
             //Remove?
@@ -1353,25 +1324,25 @@ namespace Hangman
             InvalidateCustimization();
             ColorHook();
 
-            if (!(_LockWidth == 0))
-                Width = _LockWidth;
-            if (!(_LockHeight == 0))
-                Height = _LockHeight;
+            if (!(_lockWidth == 0))
+                Width = _lockWidth;
+            if (!(_lockHeight == 0))
+                Height = _lockHeight;
 
-            Transparent = _Transparent;
-            if (_Transparent && _BackColor)
+            Transparent = _transparent;
+            if (_transparent && _backColor)
                 BackColor = Color.Transparent;
 
             base.OnHandleCreated(e);
         }
 
-        private bool DoneCreation;
+        private bool _doneCreation;
         protected override sealed void OnParentChanged(EventArgs e)
         {
             if (Parent != null)
             {
                 OnCreation();
-                DoneCreation = true;
+                _doneCreation = true;
                 InvalidateTimer();
             }
 
@@ -1392,7 +1363,7 @@ namespace Hangman
             if (Width == 0 || Height == 0)
                 return;
 
-            if (_Transparent)
+            if (_transparent)
             {
                 PaintHook();
                 e.Graphics.DrawImage(B, 0, 0);
@@ -1414,7 +1385,7 @@ namespace Hangman
 
         protected override sealed void OnSizeChanged(EventArgs e)
         {
-            if (_Transparent)
+            if (_transparent)
             {
                 InvalidateBitmap();
             }
@@ -1425,10 +1396,10 @@ namespace Hangman
 
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
-            if (!(_LockWidth == 0))
-                width = _LockWidth;
-            if (!(_LockHeight == 0))
-                height = _LockHeight;
+            if (!(_lockWidth == 0))
+                width = _lockWidth;
+            if (!(_lockHeight == 0))
+                height = _lockHeight;
             base.SetBoundsCore(x, y, width, height, specified);
         }
 
@@ -1436,31 +1407,31 @@ namespace Hangman
 
         #region " State Handling "
 
-        private bool InPosition;
+        private bool _inPosition;
         protected override void OnMouseEnter(EventArgs e)
         {
-            InPosition = true;
+            _inPosition = true;
             SetState(MouseState.Over);
             base.OnMouseEnter(e);
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            if (InPosition)
+            if (_inPosition)
                 SetState(MouseState.Over);
             base.OnMouseUp(e);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
                 SetState(MouseState.Down);
             base.OnMouseDown(e);
         }
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            InPosition = false;
+            _inPosition = false;
             SetState(MouseState.None);
             base.OnMouseLeave(e);
         }
@@ -1524,7 +1495,7 @@ namespace Hangman
             }
         }
 
-        private bool _BackColor;
+        private bool _backColor;
         [Category("Misc")]
         public override Color BackColor
         {
@@ -1533,7 +1504,7 @@ namespace Hangman
             {
                 if (!IsHandleCreated && value == Color.Transparent)
                 {
-                    _BackColor = true;
+                    _backColor = true;
                     return;
                 }
 
@@ -1547,44 +1518,44 @@ namespace Hangman
 
         #region " Public Properties "
 
-        private bool _NoRounding;
+        private bool _noRounding;
         public bool NoRounding
         {
-            get { return _NoRounding; }
+            get { return _noRounding; }
             set
             {
-                _NoRounding = value;
+                _noRounding = value;
                 Invalidate();
             }
         }
 
-        private Image _Image;
+        private Image _image;
         public Image Image
         {
-            get { return _Image; }
+            get { return _image; }
             set
             {
                 if (value == null)
                 {
-                    _ImageSize = Size.Empty;
+                    ImageSize = Size.Empty;
                 }
                 else
                 {
-                    _ImageSize = value.Size;
+                    ImageSize = value.Size;
                 }
 
-                _Image = value;
+                _image = value;
                 Invalidate();
             }
         }
 
-        private bool _Transparent;
+        private bool _transparent;
         public bool Transparent
         {
-            get { return _Transparent; }
+            get { return _transparent; }
             set
             {
-                _Transparent = value;
+                _transparent = value;
                 if (!IsHandleCreated)
                     return;
 
@@ -1604,27 +1575,27 @@ namespace Hangman
             }
         }
 
-        private Dictionary<string, Color> Items = new Dictionary<string, Color>();
+        private readonly Dictionary<string, Color> _items = new Dictionary<string, Color>();
         public Bloom[] Colors
         {
             get
             {
                 List<Bloom> T = new List<Bloom>();
-                Dictionary<string, Color>.Enumerator E = Items.GetEnumerator();
+                Dictionary<string, Color>.Enumerator e = _items.GetEnumerator();
 
-                while (E.MoveNext())
+                while (e.MoveNext())
                 {
-                    T.Add(new Bloom(E.Current.Key, E.Current.Value));
+                    T.Add(new Bloom(e.Current.Key, e.Current.Value));
                 }
 
                 return T.ToArray();
             }
             set
             {
-                foreach (Bloom B in value)
+                foreach (Bloom b in value)
                 {
-                    if (Items.ContainsKey(B.Name))
-                        Items[B.Name] = B.Value;
+                    if (_items.ContainsKey(b.Name))
+                        _items[b.Name] = b.Value;
                 }
 
                 InvalidateCustimization();
@@ -1633,24 +1604,24 @@ namespace Hangman
             }
         }
 
-        private string _Customization;
+        private string _customization;
         public string Customization
         {
-            get { return _Customization; }
+            get { return _customization; }
             set
             {
-                if (value == _Customization)
+                if (value == _customization)
                     return;
 
-                byte[] Data = null;
-                Bloom[] Items = Colors;
+                byte[] data = null;
+                Bloom[] items = Colors;
 
                 try
                 {
-                    Data = Convert.FromBase64String(value);
-                    for (int I = 0; I <= Items.Length - 1; I++)
+                    data = Convert.FromBase64String(value);
+                    for (int I = 0; I <= items.Length - 1; I++)
                     {
-                        Items[I].Value = Color.FromArgb(BitConverter.ToInt32(Data, I * 4));
+                        items[I].Value = Color.FromArgb(BitConverter.ToInt32(data, I * 4));
                     }
                 }
                 catch
@@ -1658,9 +1629,9 @@ namespace Hangman
                     return;
                 }
 
-                _Customization = value;
+                _customization = value;
 
-                Colors = Items;
+                Colors = items;
                 ColorHook();
                 Invalidate();
             }
@@ -1670,43 +1641,39 @@ namespace Hangman
 
         #region " Private Properties "
 
-        private Size _ImageSize;
-        protected Size ImageSize
-        {
-            get { return _ImageSize; }
-        }
+        protected Size ImageSize { get; private set; }
 
-        private int _LockWidth;
+        private int _lockWidth;
         protected int LockWidth
         {
-            get { return _LockWidth; }
+            get { return _lockWidth; }
             set
             {
-                _LockWidth = value;
+                _lockWidth = value;
                 if (!(LockWidth == 0) && IsHandleCreated)
                     Width = LockWidth;
             }
         }
 
-        private int _LockHeight;
+        private int _lockHeight;
         protected int LockHeight
         {
-            get { return _LockHeight; }
+            get { return _lockHeight; }
             set
             {
-                _LockHeight = value;
+                _lockHeight = value;
                 if (!(LockHeight == 0) && IsHandleCreated)
                     Height = LockHeight;
             }
         }
 
-        private bool _IsAnimated;
+        private bool _isAnimated;
         protected bool IsAnimated
         {
-            get { return _IsAnimated; }
+            get { return _isAnimated; }
             set
             {
-                _IsAnimated = value;
+                _isAnimated = value;
                 InvalidateTimer();
             }
         }
@@ -1718,29 +1685,29 @@ namespace Hangman
 
         protected Pen GetPen(string name)
         {
-            return new Pen(Items[name]);
+            return new Pen(_items[name]);
         }
         protected Pen GetPen(string name, float width)
         {
-            return new Pen(Items[name], width);
+            return new Pen(_items[name], width);
         }
 
         protected SolidBrush GetBrush(string name)
         {
-            return new SolidBrush(Items[name]);
+            return new SolidBrush(_items[name]);
         }
 
         protected Color GetColor(string name)
         {
-            return Items[name];
+            return _items[name];
         }
 
         protected void SetColor(string name, Color value)
         {
-            if (Items.ContainsKey(name))
-                Items[name] = value;
+            if (_items.ContainsKey(name))
+                _items[name] = value;
             else
-                Items.Add(name, value);
+                _items.Add(name, value);
         }
         protected void SetColor(string name, byte r, byte g, byte b)
         {
@@ -1765,23 +1732,23 @@ namespace Hangman
 
         private void InvalidateCustimization()
         {
-            MemoryStream M = new MemoryStream(Items.Count * 4);
+            MemoryStream m = new MemoryStream(_items.Count * 4);
 
-            foreach (Bloom B in Colors)
+            foreach (Bloom b in Colors)
             {
-                M.Write(BitConverter.GetBytes(B.Value.ToArgb()), 0, 4);
+                m.Write(BitConverter.GetBytes(b.Value.ToArgb()), 0, 4);
             }
 
-            M.Close();
-            _Customization = Convert.ToBase64String(M.ToArray());
+            m.Close();
+            _customization = Convert.ToBase64String(m.ToArray());
         }
 
         private void InvalidateTimer()
         {
-            if (DesignMode || !DoneCreation)
+            if (DesignMode || !_doneCreation)
                 return;
 
-            if (_IsAnimated)
+            if (_isAnimated)
             {
                 ThemeShare.AddAnimationCallback(DoAnimation);
             }
@@ -1811,25 +1778,25 @@ namespace Hangman
 
         #region " Offset "
 
-        private Rectangle OffsetReturnRectangle;
+        private Rectangle _offsetReturnRectangle;
         protected Rectangle Offset(Rectangle r, int amount)
         {
-            OffsetReturnRectangle = new Rectangle(r.X + amount, r.Y + amount, r.Width - (amount * 2), r.Height - (amount * 2));
-            return OffsetReturnRectangle;
+            _offsetReturnRectangle = new Rectangle(r.X + amount, r.Y + amount, r.Width - amount * 2, r.Height - amount * 2);
+            return _offsetReturnRectangle;
         }
 
-        private Size OffsetReturnSize;
+        private Size _offsetReturnSize;
         protected Size Offset(Size s, int amount)
         {
-            OffsetReturnSize = new Size(s.Width + amount, s.Height + amount);
-            return OffsetReturnSize;
+            _offsetReturnSize = new Size(s.Width + amount, s.Height + amount);
+            return _offsetReturnSize;
         }
 
-        private Point OffsetReturnPoint;
+        private Point _offsetReturnPoint;
         protected Point Offset(Point p, int amount)
         {
-            OffsetReturnPoint = new Point(p.X + amount, p.Y + amount);
-            return OffsetReturnPoint;
+            _offsetReturnPoint = new Point(p.X + amount, p.Y + amount);
+            return _offsetReturnPoint;
         }
 
         #endregion
@@ -1837,16 +1804,16 @@ namespace Hangman
         #region " Center "
 
 
-        private Point CenterReturn;
+        private Point _centerReturn;
         protected Point Center(Rectangle p, Rectangle c)
         {
-            CenterReturn = new Point((p.Width / 2 - c.Width / 2) + p.X + c.X, (p.Height / 2 - c.Height / 2) + p.Y + c.Y);
-            return CenterReturn;
+            _centerReturn = new Point(p.Width / 2 - c.Width / 2 + p.X + c.X, p.Height / 2 - c.Height / 2 + p.Y + c.Y);
+            return _centerReturn;
         }
         protected Point Center(Rectangle p, Size c)
         {
-            CenterReturn = new Point((p.Width / 2 - c.Width / 2) + p.X, (p.Height / 2 - c.Height / 2) + p.Y);
-            return CenterReturn;
+            _centerReturn = new Point(p.Width / 2 - c.Width / 2 + p.X, p.Height / 2 - c.Height / 2 + p.Y);
+            return _centerReturn;
         }
 
         protected Point Center(Rectangle child)
@@ -1869,25 +1836,25 @@ namespace Hangman
 
         protected Point Center(int pWidth, int pHeight, int cWidth, int cHeight)
         {
-            CenterReturn = new Point(pWidth / 2 - cWidth / 2, pHeight / 2 - cHeight / 2);
-            return CenterReturn;
+            _centerReturn = new Point(pWidth / 2 - cWidth / 2, pHeight / 2 - cHeight / 2);
+            return _centerReturn;
         }
 
         #endregion
 
         #region " Measure "
 
-        private Bitmap MeasureBitmap;
+        private readonly Bitmap _measureBitmap;
         //TODO: Potential issues during multi-threading.
-        private Graphics MeasureGraphics;
+        private readonly Graphics _measureGraphics;
 
         protected Size Measure()
         {
-            return MeasureGraphics.MeasureString(Text, Font, Width).ToSize();
+            return _measureGraphics.MeasureString(Text, Font, Width).ToSize();
         }
         protected Size Measure(string text)
         {
-            return MeasureGraphics.MeasureString(text, Font, Width).ToSize();
+            return _measureGraphics.MeasureString(text, Font, Width).ToSize();
         }
 
         #endregion
@@ -1896,17 +1863,17 @@ namespace Hangman
         #region " DrawPixel "
 
 
-        private SolidBrush DrawPixelBrush;
+        private SolidBrush _drawPixelBrush;
         protected void DrawPixel(Color c1, int x, int y)
         {
-            if (_Transparent)
+            if (_transparent)
             {
                 B.SetPixel(x, y, c1);
             }
             else
             {
-                DrawPixelBrush = new SolidBrush(c1);
-                G.FillRectangle(DrawPixelBrush, x, y, 1, 1);
+                _drawPixelBrush = new SolidBrush(c1);
+                G.FillRectangle(_drawPixelBrush, x, y, 1, 1);
             }
         }
 
@@ -1915,7 +1882,7 @@ namespace Hangman
         #region " DrawCorners "
 
 
-        private SolidBrush DrawCornersBrush;
+        private SolidBrush _drawCornersBrush;
         protected void DrawCorners(Color c1, int offset)
         {
             DrawCorners(c1, 0, 0, Width, Height, offset);
@@ -1926,7 +1893,7 @@ namespace Hangman
         }
         protected void DrawCorners(Color c1, int x, int y, int width, int height, int offset)
         {
-            DrawCorners(c1, x + offset, y + offset, width - (offset * 2), height - (offset * 2));
+            DrawCorners(c1, x + offset, y + offset, width - offset * 2, height - offset * 2);
         }
 
         protected void DrawCorners(Color c1)
@@ -1939,10 +1906,10 @@ namespace Hangman
         }
         protected void DrawCorners(Color c1, int x, int y, int width, int height)
         {
-            if (_NoRounding)
+            if (_noRounding)
                 return;
 
-            if (_Transparent)
+            if (_transparent)
             {
                 B.SetPixel(x, y, c1);
                 B.SetPixel(x + (width - 1), y, c1);
@@ -1951,11 +1918,11 @@ namespace Hangman
             }
             else
             {
-                DrawCornersBrush = new SolidBrush(c1);
-                G.FillRectangle(DrawCornersBrush, x, y, 1, 1);
-                G.FillRectangle(DrawCornersBrush, x + (width - 1), y, 1, 1);
-                G.FillRectangle(DrawCornersBrush, x, y + (height - 1), 1, 1);
-                G.FillRectangle(DrawCornersBrush, x + (width - 1), y + (height - 1), 1, 1);
+                _drawCornersBrush = new SolidBrush(c1);
+                G.FillRectangle(_drawCornersBrush, x, y, 1, 1);
+                G.FillRectangle(_drawCornersBrush, x + (width - 1), y, 1, 1);
+                G.FillRectangle(_drawCornersBrush, x, y + (height - 1), 1, 1);
+                G.FillRectangle(_drawCornersBrush, x + (width - 1), y + (height - 1), 1, 1);
             }
         }
 
@@ -1973,7 +1940,7 @@ namespace Hangman
         }
         protected void DrawBorders(Pen p1, int x, int y, int width, int height, int offset)
         {
-            DrawBorders(p1, x + offset, y + offset, width - (offset * 2), height - (offset * 2));
+            DrawBorders(p1, x + offset, y + offset, width - offset * 2, height - offset * 2);
         }
 
         protected void DrawBorders(Pen p1)
@@ -1993,9 +1960,9 @@ namespace Hangman
 
         #region " DrawText "
 
-        private Point DrawTextPoint;
+        private Point _drawTextPoint;
 
-        private Size DrawTextSize;
+        private Size _drawTextSize;
         protected void DrawText(Brush b1, HorizontalAlignment a, int x, int y)
         {
             DrawText(b1, Text, a, x, y);
@@ -2005,19 +1972,19 @@ namespace Hangman
             if (text.Length == 0)
                 return;
 
-            DrawTextSize = Measure(text);
-            DrawTextPoint = Center(DrawTextSize);
+            _drawTextSize = Measure(text);
+            _drawTextPoint = Center(_drawTextSize);
 
             switch (a)
             {
                 case HorizontalAlignment.Left:
-                    G.DrawString(text, Font, b1, x, DrawTextPoint.Y + y);
+                    G.DrawString(text, Font, b1, x, _drawTextPoint.Y + y);
                     break;
                 case HorizontalAlignment.Center:
-                    G.DrawString(text, Font, b1, DrawTextPoint.X + x, DrawTextPoint.Y + y);
+                    G.DrawString(text, Font, b1, _drawTextPoint.X + x, _drawTextPoint.Y + y);
                     break;
                 case HorizontalAlignment.Right:
-                    G.DrawString(text, Font, b1, Width - DrawTextSize.Width - x, DrawTextPoint.Y + y);
+                    G.DrawString(text, Font, b1, Width - _drawTextSize.Width - x, _drawTextPoint.Y + y);
                     break;
             }
         }
@@ -2040,38 +2007,38 @@ namespace Hangman
         #region " DrawImage "
 
 
-        private Point DrawImagePoint;
+        private Point _drawImagePoint;
         protected void DrawImage(HorizontalAlignment a, int x, int y)
         {
-            DrawImage(_Image, a, x, y);
+            DrawImage(_image, a, x, y);
         }
         protected void DrawImage(Image image, HorizontalAlignment a, int x, int y)
         {
             if (image == null)
                 return;
-            DrawImagePoint = Center(image.Size);
+            _drawImagePoint = Center(image.Size);
 
             switch (a)
             {
                 case HorizontalAlignment.Left:
-                    G.DrawImage(image, x, DrawImagePoint.Y + y, image.Width, image.Height);
+                    G.DrawImage(image, x, _drawImagePoint.Y + y, image.Width, image.Height);
                     break;
                 case HorizontalAlignment.Center:
-                    G.DrawImage(image, DrawImagePoint.X + x, DrawImagePoint.Y + y, image.Width, image.Height);
+                    G.DrawImage(image, _drawImagePoint.X + x, _drawImagePoint.Y + y, image.Width, image.Height);
                     break;
                 case HorizontalAlignment.Right:
-                    G.DrawImage(image, Width - image.Width - x, DrawImagePoint.Y + y, image.Width, image.Height);
+                    G.DrawImage(image, Width - image.Width - x, _drawImagePoint.Y + y, image.Width, image.Height);
                     break;
             }
         }
 
         protected void DrawImage(Point p1)
         {
-            DrawImage(_Image, p1.X, p1.Y);
+            DrawImage(_image, p1.X, p1.Y);
         }
         protected void DrawImage(int x, int y)
         {
-            DrawImage(_Image, x, y);
+            DrawImage(_image, x, y);
         }
 
         protected void DrawImage(Image image, Point p1)
@@ -2089,79 +2056,79 @@ namespace Hangman
 
         #region " DrawGradient "
 
-        private LinearGradientBrush DrawGradientBrush;
+        private LinearGradientBrush _drawGradientBrush;
 
-        private Rectangle DrawGradientRectangle;
+        private Rectangle _drawGradientRectangle;
         protected void DrawGradient(ColorBlend blend, int x, int y, int width, int height)
         {
-            DrawGradientRectangle = new Rectangle(x, y, width, height);
-            DrawGradient(blend, DrawGradientRectangle);
+            _drawGradientRectangle = new Rectangle(x, y, width, height);
+            DrawGradient(blend, _drawGradientRectangle);
         }
         protected void DrawGradient(ColorBlend blend, int x, int y, int width, int height, float angle)
         {
-            DrawGradientRectangle = new Rectangle(x, y, width, height);
-            DrawGradient(blend, DrawGradientRectangle, angle);
+            _drawGradientRectangle = new Rectangle(x, y, width, height);
+            DrawGradient(blend, _drawGradientRectangle, angle);
         }
 
         protected void DrawGradient(ColorBlend blend, Rectangle r)
         {
-            DrawGradientBrush = new LinearGradientBrush(r, Color.Empty, Color.Empty, 90f);
-            DrawGradientBrush.InterpolationColors = blend;
-            G.FillRectangle(DrawGradientBrush, r);
+            _drawGradientBrush = new LinearGradientBrush(r, Color.Empty, Color.Empty, 90f);
+            _drawGradientBrush.InterpolationColors = blend;
+            G.FillRectangle(_drawGradientBrush, r);
         }
         protected void DrawGradient(ColorBlend blend, Rectangle r, float angle)
         {
-            DrawGradientBrush = new LinearGradientBrush(r, Color.Empty, Color.Empty, angle);
-            DrawGradientBrush.InterpolationColors = blend;
-            G.FillRectangle(DrawGradientBrush, r);
+            _drawGradientBrush = new LinearGradientBrush(r, Color.Empty, Color.Empty, angle);
+            _drawGradientBrush.InterpolationColors = blend;
+            G.FillRectangle(_drawGradientBrush, r);
         }
 
 
         protected void DrawGradient(Color c1, Color c2, int x, int y, int width, int height)
         {
-            DrawGradientRectangle = new Rectangle(x, y, width, height);
-            DrawGradient(c1, c2, DrawGradientRectangle);
+            _drawGradientRectangle = new Rectangle(x, y, width, height);
+            DrawGradient(c1, c2, _drawGradientRectangle);
         }
         protected void DrawGradient(Color c1, Color c2, int x, int y, int width, int height, float angle)
         {
-            DrawGradientRectangle = new Rectangle(x, y, width, height);
-            DrawGradient(c1, c2, DrawGradientRectangle, angle);
+            _drawGradientRectangle = new Rectangle(x, y, width, height);
+            DrawGradient(c1, c2, _drawGradientRectangle, angle);
         }
 
         protected void DrawGradient(Color c1, Color c2, Rectangle r)
         {
-            DrawGradientBrush = new LinearGradientBrush(r, c1, c2, 90f);
-            G.FillRectangle(DrawGradientBrush, r);
+            _drawGradientBrush = new LinearGradientBrush(r, c1, c2, 90f);
+            G.FillRectangle(_drawGradientBrush, r);
         }
         protected void DrawGradient(Color c1, Color c2, Rectangle r, float angle)
         {
-            DrawGradientBrush = new LinearGradientBrush(r, c1, c2, angle);
-            G.FillRectangle(DrawGradientBrush, r);
+            _drawGradientBrush = new LinearGradientBrush(r, c1, c2, angle);
+            G.FillRectangle(_drawGradientBrush, r);
         }
 
         #endregion
 
         #region " DrawRadial "
 
-        private GraphicsPath DrawRadialPath;
-        private PathGradientBrush DrawRadialBrush1;
-        private LinearGradientBrush DrawRadialBrush2;
+        private readonly GraphicsPath _drawRadialPath;
+        private PathGradientBrush _drawRadialBrush1;
+        private LinearGradientBrush _drawRadialBrush2;
 
-        private Rectangle DrawRadialRectangle;
+        private Rectangle _drawRadialRectangle;
         public void DrawRadial(ColorBlend blend, int x, int y, int width, int height)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(blend, DrawRadialRectangle, width / 2, height / 2);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(blend, _drawRadialRectangle, width / 2, height / 2);
         }
         public void DrawRadial(ColorBlend blend, int x, int y, int width, int height, Point center)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(blend, DrawRadialRectangle, center.X, center.Y);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(blend, _drawRadialRectangle, center.X, center.Y);
         }
         public void DrawRadial(ColorBlend blend, int x, int y, int width, int height, int cx, int cy)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(blend, DrawRadialRectangle, cx, cy);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(blend, _drawRadialRectangle, cx, cy);
         }
 
         public void DrawRadial(ColorBlend blend, Rectangle r)
@@ -2174,111 +2141,111 @@ namespace Hangman
         }
         public void DrawRadial(ColorBlend blend, Rectangle r, int cx, int cy)
         {
-            DrawRadialPath.Reset();
-            DrawRadialPath.AddEllipse(r.X, r.Y, r.Width - 1, r.Height - 1);
+            _drawRadialPath.Reset();
+            _drawRadialPath.AddEllipse(r.X, r.Y, r.Width - 1, r.Height - 1);
 
-            DrawRadialBrush1 = new PathGradientBrush(DrawRadialPath);
-            DrawRadialBrush1.CenterPoint = new Point(r.X + cx, r.Y + cy);
-            DrawRadialBrush1.InterpolationColors = blend;
+            _drawRadialBrush1 = new PathGradientBrush(_drawRadialPath);
+            _drawRadialBrush1.CenterPoint = new Point(r.X + cx, r.Y + cy);
+            _drawRadialBrush1.InterpolationColors = blend;
 
             if (G.SmoothingMode == SmoothingMode.AntiAlias)
             {
-                G.FillEllipse(DrawRadialBrush1, r.X + 1, r.Y + 1, r.Width - 3, r.Height - 3);
+                G.FillEllipse(_drawRadialBrush1, r.X + 1, r.Y + 1, r.Width - 3, r.Height - 3);
             }
             else
             {
-                G.FillEllipse(DrawRadialBrush1, r);
+                G.FillEllipse(_drawRadialBrush1, r);
             }
         }
 
 
         protected void DrawRadial(Color c1, Color c2, int x, int y, int width, int height)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(c1, c2, DrawRadialRectangle);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(c1, c2, _drawRadialRectangle);
         }
         protected void DrawRadial(Color c1, Color c2, int x, int y, int width, int height, float angle)
         {
-            DrawRadialRectangle = new Rectangle(x, y, width, height);
-            DrawRadial(c1, c2, DrawRadialRectangle, angle);
+            _drawRadialRectangle = new Rectangle(x, y, width, height);
+            DrawRadial(c1, c2, _drawRadialRectangle, angle);
         }
 
         protected void DrawRadial(Color c1, Color c2, Rectangle r)
         {
-            DrawRadialBrush2 = new LinearGradientBrush(r, c1, c2, 90f);
-            G.FillEllipse(DrawRadialBrush2, r);
+            _drawRadialBrush2 = new LinearGradientBrush(r, c1, c2, 90f);
+            G.FillEllipse(_drawRadialBrush2, r);
         }
         protected void DrawRadial(Color c1, Color c2, Rectangle r, float angle)
         {
-            DrawRadialBrush2 = new LinearGradientBrush(r, c1, c2, angle);
-            G.FillEllipse(DrawRadialBrush2, r);
+            _drawRadialBrush2 = new LinearGradientBrush(r, c1, c2, angle);
+            G.FillEllipse(_drawRadialBrush2, r);
         }
 
         #endregion
 
         #region " CreateRound "
 
-        private GraphicsPath CreateRoundPath;
+        private GraphicsPath _createRoundPath;
 
-        private Rectangle CreateRoundRectangle;
+        private Rectangle _createRoundRectangle;
         public GraphicsPath CreateRound(int x, int y, int width, int height, int slope)
         {
-            CreateRoundRectangle = new Rectangle(x, y, width, height);
-            return CreateRound(CreateRoundRectangle, slope);
+            _createRoundRectangle = new Rectangle(x, y, width, height);
+            return CreateRound(_createRoundRectangle, slope);
         }
 
         public GraphicsPath CreateRound(Rectangle r, int slope)
         {
-            CreateRoundPath = new GraphicsPath(FillMode.Winding);
-            CreateRoundPath.AddArc(r.X, r.Y, slope, slope, 180f, 90f);
-            CreateRoundPath.AddArc(r.Right - slope, r.Y, slope, slope, 270f, 90f);
-            CreateRoundPath.AddArc(r.Right - slope, r.Bottom - slope, slope, slope, 0f, 90f);
-            CreateRoundPath.AddArc(r.X, r.Bottom - slope, slope, slope, 90f, 90f);
-            CreateRoundPath.CloseFigure();
-            return CreateRoundPath;
+            _createRoundPath = new GraphicsPath(FillMode.Winding);
+            _createRoundPath.AddArc(r.X, r.Y, slope, slope, 180f, 90f);
+            _createRoundPath.AddArc(r.Right - slope, r.Y, slope, slope, 270f, 90f);
+            _createRoundPath.AddArc(r.Right - slope, r.Bottom - slope, slope, slope, 0f, 90f);
+            _createRoundPath.AddArc(r.X, r.Bottom - slope, slope, slope, 90f, 90f);
+            _createRoundPath.CloseFigure();
+            return _createRoundPath;
         }
 
         #endregion
 
     }
 
-    static class ThemeShare
+    internal static class ThemeShare
     {
 
         #region " Animation "
 
-        private static int Frames;
-        private static bool Invalidate;
+        private static int _frames;
+        private static bool _invalidate;
 
         public static PrecisionTimer ThemeTimer = new PrecisionTimer();
         //1000 / 50 = 20 FPS
-        private const int FPS = 50;
+        private const int Fps = 50;
 
         private const int Rate = 10;
         public delegate void AnimationDelegate(bool invalidate);
 
 
-        private static List<AnimationDelegate> Callbacks = new List<AnimationDelegate>();
+        private static readonly List<AnimationDelegate> _callbacks = new List<AnimationDelegate>();
         private static void HandleCallbacks(IntPtr state, bool reserve)
         {
-            Invalidate = (Frames >= FPS);
-            if (Invalidate)
-                Frames = 0;
+            _invalidate = _frames >= Fps;
+            if (_invalidate)
+                _frames = 0;
 
-            lock (Callbacks)
+            lock (_callbacks)
             {
-                for (int I = 0; I <= Callbacks.Count - 1; I++)
+                for (int I = 0; I <= _callbacks.Count - 1; I++)
                 {
-                    Callbacks[I].Invoke(Invalidate);
+                    _callbacks[I].Invoke(_invalidate);
                 }
             }
 
-            Frames += Rate;
+            _frames += Rate;
         }
 
         private static void InvalidateThemeTimer()
         {
-            if (Callbacks.Count == 0)
+            if (_callbacks.Count == 0)
             {
                 ThemeTimer.Delete();
             }
@@ -2290,24 +2257,24 @@ namespace Hangman
 
         public static void AddAnimationCallback(AnimationDelegate callback)
         {
-            lock (Callbacks)
+            lock (_callbacks)
             {
-                if (Callbacks.Contains(callback))
+                if (_callbacks.Contains(callback))
                     return;
 
-                Callbacks.Add(callback);
+                _callbacks.Add(callback);
                 InvalidateThemeTimer();
             }
         }
 
         public static void RemoveAnimationCallback(AnimationDelegate callback)
         {
-            lock (Callbacks)
+            lock (_callbacks)
             {
-                if (!Callbacks.Contains(callback))
+                if (!_callbacks.Contains(callback))
                     return;
 
-                Callbacks.Remove(callback);
+                _callbacks.Remove(callback);
                 InvalidateThemeTimer();
             }
         }
@@ -2316,7 +2283,7 @@ namespace Hangman
 
     }
 
-    enum MouseState : byte
+    internal enum MouseState : byte
     {
         None = 0,
         Over = 1,
@@ -2324,7 +2291,7 @@ namespace Hangman
         Block = 3
     }
 
-    struct Bloom
+    internal struct Bloom
     {
 
         public string _Name;
@@ -2333,25 +2300,19 @@ namespace Hangman
             get { return _Name; }
         }
 
-        private Color _Value;
-        public Color Value
-        {
-            get { return _Value; }
-            set { _Value = value; }
-        }
+        public Color Value { get; set; }
 
         public string ValueHex
         {
-            get { return string.Concat("#", _Value.R.ToString("X2", null), _Value.G.ToString("X2", null), _Value.B.ToString("X2", null)); }
+            get { return string.Concat("#", Value.R.ToString("X2", null), Value.G.ToString("X2", null), Value.B.ToString("X2", null)); }
             set
             {
                 try
                 {
-                    _Value = ColorTranslator.FromHtml(value);
+                    Value = ColorTranslator.FromHtml(value);
                 }
                 catch
                 {
-                    return;
                 }
             }
         }
@@ -2360,7 +2321,7 @@ namespace Hangman
         public Bloom(string name, Color value)
         {
             _Name = name;
-            _Value = value;
+            Value = value;
         }
     }
 
@@ -2371,18 +2332,13 @@ namespace Hangman
     //Changed: 11/30/2011
     //Version: 1.0.0
     //------------------
-    class PrecisionTimer : IDisposable
+    internal class PrecisionTimer : IDisposable
     {
+        public bool Enabled { get; private set; }
 
-        private bool _Enabled;
-        public bool Enabled
-        {
-            get { return _Enabled; }
-        }
+        private IntPtr _handle;
 
-        private IntPtr Handle;
-
-        private TimerDelegate TimerCallback;
+        private TimerDelegate _timerCallback;
         [DllImport("kernel32.dll", EntryPoint = "CreateTimerQueueTimer")]
         private static extern bool CreateTimerQueueTimer(ref IntPtr handle, IntPtr queue, TimerDelegate callback, IntPtr state, uint dueTime, uint period, uint flags);
 
@@ -2393,34 +2349,34 @@ namespace Hangman
 
         public void Create(uint dueTime, uint period, TimerDelegate callback)
         {
-            if (_Enabled)
+            if (Enabled)
                 return;
 
-            TimerCallback = callback;
-            bool Success = CreateTimerQueueTimer(ref Handle, IntPtr.Zero, TimerCallback, IntPtr.Zero, dueTime, period, 0);
+            _timerCallback = callback;
+            bool success = CreateTimerQueueTimer(ref _handle, IntPtr.Zero, _timerCallback, IntPtr.Zero, dueTime, period, 0);
 
-            if (!Success)
+            if (!success)
                 ThrowNewException("CreateTimerQueueTimer");
-            _Enabled = Success;
+            Enabled = success;
         }
 
         public void Delete()
         {
-            if (!_Enabled)
+            if (!Enabled)
                 return;
-            bool Success = DeleteTimerQueueTimer(IntPtr.Zero, Handle, IntPtr.Zero);
+            bool success = DeleteTimerQueueTimer(IntPtr.Zero, _handle, IntPtr.Zero);
 
-            if (!Success && !(Marshal.GetLastWin32Error() == 997))
+            if (!success && !(Marshal.GetLastWin32Error() == 997))
             {
                 ThrowNewException("DeleteTimerQueueTimer");
             }
 
-            _Enabled = !Success;
+            Enabled = !success;
         }
 
         private void ThrowNewException(string name)
         {
-            throw new Exception(string.Format("{0} failed. Win32Error: {1}", name, Marshal.GetLastWin32Error()));
+            throw new Exception($"{name} failed. Win32Error: {Marshal.GetLastWin32Error()}");
         }
 
         public void Dispose()

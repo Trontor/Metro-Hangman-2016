@@ -1,11 +1,16 @@
-﻿namespace Hangman
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+using MetroFramework.Components;
+using MetroFramework.Controls;
+
+namespace MetroHangman
 {
     partial class Start
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -52,7 +57,7 @@
             this.btn_Start = new MetroFramework.Controls.MetroButton();
             this.styleManager = new MetroFramework.Components.MetroStyleManager(this.components);
             this.tmr_Disco = new System.Windows.Forms.Timer(this.components);
-            this.ambiance_Separator1 = new Ambiance.Ambiance_Separator();
+            this.ambiance_Separator1 = new MetroHangman.AmbianceSeparator();
             this.tmr_Theme = new System.Windows.Forms.Timer(this.components);
             this.btn_Settings = new MetroFramework.Controls.MetroButton();
             this.pnl_MultiOptions.SuspendLayout();
@@ -80,7 +85,7 @@
             this.metroLabel1.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.metroLabel1.Location = new System.Drawing.Point(36, 60);
             this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(298, 25);
+            this.metroLabel1.Size = new System.Drawing.Size(296, 25);
             this.metroLabel1.TabIndex = 47;
             this.metroLabel1.Text = "Welcome to Rohyl\'s Hangman 2015";
             this.metroLabel1.UseStyleColors = true;
@@ -99,7 +104,7 @@
             this.metroLabel3.AutoSize = true;
             this.metroLabel3.Location = new System.Drawing.Point(22, 120);
             this.metroLabel3.Name = "metroLabel3";
-            this.metroLabel3.Size = new System.Drawing.Size(145, 19);
+            this.metroLabel3.Size = new System.Drawing.Size(142, 19);
             this.metroLabel3.TabIndex = 49;
             this.metroLabel3.Text = "1. Choose Playing Type";
             // 
@@ -152,7 +157,7 @@
             this.txtdynamic_Option2.AutoSize = true;
             this.txtdynamic_Option2.Location = new System.Drawing.Point(22, 209);
             this.txtdynamic_Option2.Name = "txtdynamic_Option2";
-            this.txtdynamic_Option2.Size = new System.Drawing.Size(136, 19);
+            this.txtdynamic_Option2.Size = new System.Drawing.Size(134, 19);
             this.txtdynamic_Option2.TabIndex = 54;
             this.txtdynamic_Option2.Text = "2. Choose Word Pack";
             // 
@@ -250,7 +255,7 @@
             this.rad_Hard.FontSize = MetroFramework.MetroCheckBoxSize.Medium;
             this.rad_Hard.Location = new System.Drawing.Point(197, 6);
             this.rad_Hard.Name = "rad_Hard";
-            this.rad_Hard.Size = new System.Drawing.Size(99, 19);
+            this.rad_Hard.Size = new System.Drawing.Size(98, 19);
             this.rad_Hard.TabIndex = 61;
             this.rad_Hard.Text = "Hard Words";
             this.rad_Hard.UseSelectable = true;
@@ -262,7 +267,7 @@
             this.rad_Common.FontSize = MetroFramework.MetroCheckBoxSize.Medium;
             this.rad_Common.Location = new System.Drawing.Point(12, 6);
             this.rad_Common.Name = "rad_Common";
-            this.rad_Common.Size = new System.Drawing.Size(126, 19);
+            this.rad_Common.Size = new System.Drawing.Size(125, 19);
             this.rad_Common.TabIndex = 60;
             this.rad_Common.TabStop = true;
             this.rad_Common.Text = "Common Words";
@@ -325,6 +330,7 @@
             this.btn_Settings.UseCustomBackColor = true;
             this.btn_Settings.UseSelectable = true;
             this.btn_Settings.UseStyleColors = true;
+            this.btn_Settings.UseVisualStyleBackColor = false;
             this.btn_Settings.Click += new System.EventHandler(this.btn_Settings_Click);
             // 
             // Start
@@ -373,31 +379,31 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private Ambiance.Ambiance_Separator ambiance_Separator1;
-        private MetroFramework.Controls.MetroLabel metroLabel1;
-        private MetroFramework.Controls.MetroLabel metroLabel2;
-        private MetroFramework.Controls.MetroLabel metroLabel3;
-        private MetroFramework.Controls.MetroButton btn_SinglePlayer;
-        private MetroFramework.Controls.MetroButton btn_MultiPlayer;
-        private MetroFramework.Controls.MetroLabel metroLabel4;
-        private MetroFramework.Controls.MetroLabel metroLabel5;
-        private MetroFramework.Controls.MetroLabel txtdynamic_Option2;
-        private System.Windows.Forms.Panel pnl_MultiOptions;
-        private System.Windows.Forms.Panel pnl_MultiDisplayer;
-        private System.Windows.Forms.Button btn_showInput;
-        private System.Windows.Forms.Panel pnl_wordPacks;
-        private MetroFramework.Controls.MetroTextBox txt_CustomWord;
-        private MetroFramework.Controls.MetroCheckBox chk_hideInput;
-        private MetroFramework.Controls.MetroCheckBox chk_RevealWord;
-        private MetroFramework.Controls.MetroLabel metroLabel6;
-        private MetroFramework.Controls.MetroButton btn_Start;
-        private MetroFramework.Controls.MetroRadioButton rad_Common;
-        private MetroFramework.Controls.MetroRadioButton rad_Hard;
-        private MetroFramework.Components.MetroStyleManager styleManager;
-        private System.Windows.Forms.Timer tmr_Disco;
-        private System.Windows.Forms.Timer tmr_Theme;
-        private MetroFramework.Controls.MetroButton btn_Settings;
+        private Label label1;
+        private AmbianceSeparator ambiance_Separator1;
+        private MetroLabel metroLabel1;
+        private MetroLabel metroLabel2;
+        private MetroLabel metroLabel3;
+        private MetroButton btn_SinglePlayer;
+        private MetroButton btn_MultiPlayer;
+        private MetroLabel metroLabel4;
+        private MetroLabel metroLabel5;
+        private MetroLabel txtdynamic_Option2;
+        private Panel pnl_MultiOptions;
+        private Panel pnl_MultiDisplayer;
+        private Button btn_showInput;
+        private Panel pnl_wordPacks;
+        private MetroTextBox txt_CustomWord;
+        private MetroCheckBox chk_hideInput;
+        private MetroCheckBox chk_RevealWord;
+        private MetroLabel metroLabel6;
+        private MetroButton btn_Start;
+        private MetroRadioButton rad_Common;
+        private MetroRadioButton rad_Hard;
+        private MetroStyleManager styleManager;
+        private Timer tmr_Disco;
+        private Timer tmr_Theme;
+        private MetroButton btn_Settings;
     }
 }
 

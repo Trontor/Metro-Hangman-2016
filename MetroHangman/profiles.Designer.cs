@@ -1,11 +1,16 @@
-﻿namespace Hangman
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+using MetroFramework.Components;
+using MetroFramework.Controls;
+
+namespace MetroHangman
 {
-    partial class profiles
+    partial class Profiles
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -29,11 +34,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(profiles));
-            this.lbl_hardLosses = new Ambiance.Ambiance_Label();
-            this.lbl_hardWins = new Ambiance.Ambiance_Label();
-            this.lbl_commonLosses = new Ambiance.Ambiance_Label();
-            this.lbl_commonWins = new Ambiance.Ambiance_Label();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Profiles));
+            this.lbl_hardLosses = new AmbianceLabel();
+            this.lbl_hardWins = new AmbianceLabel();
+            this.lbl_commonLosses = new AmbianceLabel();
+            this.lbl_commonWins = new AmbianceLabel();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
@@ -199,7 +204,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(261, 65);
-            this.Name = "profiles";
+            this.Name = "Profiles";
             this.Style = MetroFramework.MetroColorStyle.Default;
             this.Text = "Statistics";
             this.TextAlign = MetroFramework.Forms.MetroFormTextAlign.Center;
@@ -212,19 +217,19 @@
 
         #endregion
 
-        private Ambiance.Ambiance_Label lbl_hardLosses;
-        private Ambiance.Ambiance_Label lbl_hardWins;
-        private Ambiance.Ambiance_Label lbl_commonLosses;
-        private Ambiance.Ambiance_Label lbl_commonWins;
-        private MetroFramework.Controls.MetroLabel metroLabel1;
-        private MetroFramework.Controls.MetroLabel metroLabel2;
-        private MetroFramework.Controls.MetroLabel metroLabel3;
-        private MetroFramework.Controls.MetroLabel metroLabel4;
-        private MetroFramework.Controls.MetroLabel metroLabel5;
-        private MetroFramework.Controls.MetroLabel metroLabel6;
-        private System.Windows.Forms.Timer tmr_Theme;
-        private MetroFramework.Components.MetroStyleManager sMgr;
-        private MetroFramework.Controls.MetroButton btn_resetStatistics;
+        private AmbianceLabel lbl_hardLosses;
+        private AmbianceLabel lbl_hardWins;
+        private AmbianceLabel lbl_commonLosses;
+        private AmbianceLabel lbl_commonWins;
+        private MetroLabel metroLabel1;
+        private MetroLabel metroLabel2;
+        private MetroLabel metroLabel3;
+        private MetroLabel metroLabel4;
+        private MetroLabel metroLabel5;
+        private MetroLabel metroLabel6;
+        private Timer tmr_Theme;
+        private MetroStyleManager sMgr;
+        private MetroButton btn_resetStatistics;
 
     }
 }

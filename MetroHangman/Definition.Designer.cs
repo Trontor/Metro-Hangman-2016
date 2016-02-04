@@ -1,11 +1,15 @@
-﻿namespace MetroHangman
+﻿using System.ComponentModel;
+using MetroFramework.Controls;
+using MetroFramework.Drawing.Html;
+
+namespace MetroHangman
 {
     partial class Definition
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -110,11 +114,11 @@
 
         #endregion
 
-        private MetroFramework.Controls.MetroLabel metroLabel1;
-        private MetroFramework.Controls.MetroLabel def;
-        private MetroFramework.Controls.MetroButton metroButton1;
-        private MetroFramework.Drawing.Html.HtmlPanel htmlPanel1;
-        private MetroFramework.Controls.MetroProgressSpinner spinner;
+        private MetroLabel metroLabel1;
+        private MetroLabel def;
+        private MetroButton metroButton1;
+        private HtmlPanel htmlPanel1;
+        private MetroProgressSpinner spinner;
 
 
 

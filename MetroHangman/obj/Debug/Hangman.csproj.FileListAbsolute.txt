@@ -51,3 +51,15 @@ D:\MetroHangman\bin\Debug\MetroFramework.dll
 D:\MetroHangman\obj\Debug\MetroHangman.exe
 D:\MetroHangman\obj\Debug\MetroHangman.pdb
 D:\MetroHangman\obj\Debug\Hangman.csprojResolveAssemblyReference.cache
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\bin\Debug\MetroHangman.exe.config
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.exe
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.pdb
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\bin\Debug\MetroHangman.exe
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\bin\Debug\MetroHangman.pdb
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.Definition.resources
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.Settings.resources
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.Properties.Resources.resources
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\Hangman.csproj.GenerateResource.Cache
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.Profiles.resources
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.Session.resources
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.Start.resources

@@ -1,37 +1,20 @@
-﻿using MetroFramework;
-using MetroFramework.Forms;
-using MetroHangman;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using MetroFramework;
+using MetroFramework.Forms;
 
-namespace Hangman
+namespace MetroHangman
 {
     public partial class Start : MetroForm
-    {
-        enum ModeType
+    {        //Creates an enumeration list (list of constants) that is used for identification of the gamemode type.
+        private enum ModeType
         {
             Single,
             Multi
         }
-        //Creates an enumeration list (list of constants) that is used for identification of the gamemode type.
-
-        /// <summary>
-        /// Calls an external function to hide the caret when the username control is selected.
-        /// </summary>
-        /// <param name="hWnd">Control ID to hide caret on</param>
-        /// <returns></returns>
-        [DllImport("user32.dll")]
-        static extern bool HideCaret(IntPtr hWnd);
 
         /// <summary>
         /// Main function, called when form is first initialised.
@@ -46,7 +29,7 @@ namespace Hangman
             Profiler.Initialise();
 
             chk_hideInput.Checked = true;
-            this.FocusMe();
+            FocusMe();
         }
         /// <summary>
         /// Shows respective controls for each mode when mode type is changed. 
@@ -103,9 +86,11 @@ namespace Hangman
             //Calls the NewSession function
             NewSession();
         }
+
         /// <summary>
         /// Hooks onto key presses anywhere on the form (regardless of what control has focus)
         /// </summary>
+        /// <param name="msg">idek</param>
         /// <param name="keyData">What key is pressed</param>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -116,11 +101,7 @@ namespace Hangman
             }
             else if (keyData == Keys.Tab)
             {
-                if (pnl_wordPacks.Visible)
-                {
-                    ChooseMode(ModeType.Multi);
-                }
-                else ChooseMode(ModeType.Single);
+                ChooseMode(pnl_wordPacks.Visible ? ModeType.Multi : ModeType.Single);
             }
 
             // Call the base class
@@ -144,7 +125,7 @@ namespace Hangman
                 //If no word packs are visible, it means that the user wants to start a multiplayer game
                 else
                     //Starts new Multiplayer game
-                    SessionHelper.NewMultiplayer(txt_CustomWord.Text, new MPParameters(chk_hideInput.Checked, chk_RevealWord.Checked));
+                    SessionHelper.NewMultiplayer(txt_CustomWord.Text, new MpParameters(chk_hideInput.Checked, chk_RevealWord.Checked));
         }
         /// <summary>
         ///  Handles when the 'hide input' button is checked or unchecked.
@@ -212,26 +193,9 @@ namespace Hangman
             txt_CustomWord.UseSystemPasswordChar = true;
         }
 
-        /// <summary>
-        ///  Handles the clicking of the '?' button.
-        /// </summary>
-        private void btn_profile_Click(object sender, EventArgs e)
-        {
-            //Explains to the user the what a 'profile' is.
-            MessageBox.Show("A profile is just an object that stores information about your Hangman games (such as wins and losses).");
-        }
-        /// <summary>
-        /// Handles the clicking of the 'Manage' button
-        /// </summary>
-        private void btn_manageProfile_Click(object sender, EventArgs e)
-        {
-            //Opens profile management form.
-            new profiles().ShowDialog();
-        }
-
         private void Start_Load(object sender, EventArgs e)
         {
-            styleManager.Style = MetroHangman.Properties.Settings.Default.Theme;
+            styleManager.Style = Properties.Settings.Default.Theme;
 
             ProcessTick();
         }
@@ -254,8 +218,8 @@ namespace Hangman
         }
         private void SetColour(MetroColorStyle style)
         {
-            MetroHangman.Properties.Settings.Default.Theme = style;
-            MetroHangman.Properties.Settings.Default.Save();
+            Properties.Settings.Default.Theme = style;
+            Properties.Settings.Default.Save();
             Invalidate();
         }
         private void tmr_Theme_Tick(object sender, EventArgs e)
@@ -264,14 +228,14 @@ namespace Hangman
         }
         private void ProcessTick()
         {
-            if (MetroHangman.Properties.Settings.Default.DiscoOn)
+            if (Properties.Settings.Default.DiscoOn)
             {
                 RandomStyle();
             }
-            styleManager.Style = MetroHangman.Properties.Settings.Default.Theme;
-            this.Style = styleManager.Style;
+            styleManager.Style = Properties.Settings.Default.Theme;
+            Style = styleManager.Style;
             Type thisType = typeof(MetroColors);
-            MethodInfo theMethod = thisType.GetMethod("get_" + Style.ToString());
+            MethodInfo theMethod = thisType.GetMethod("get_" + Style);
             MetroColors c = new MetroColors();
             btn_Settings.BackColor = (Color)theMethod.Invoke(c, null);
             styleManager.Update();

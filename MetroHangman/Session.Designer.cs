@@ -1,13 +1,16 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
-namespace Hangman
+using MetroFramework.Components;
+using MetroFramework.Controls;
+
+namespace MetroHangman
 {
-    partial class Session
+    sealed partial class Session
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -50,16 +53,16 @@ namespace Hangman
             this.pnl_MultiOptions = new System.Windows.Forms.Panel();
             this.chk_RevealWord = new MetroFramework.Controls.MetroCheckBox();
             this.chk_hideInput = new MetroFramework.Controls.MetroCheckBox();
-            this.ambiance_Label1 = new Ambiance.Ambiance_Label();
-            this.lbl_placeHolderNewWord = new Ambiance.Ambiance_Label();
+            this.ambiance_Label1 = new AmbianceLabel();
+            this.lbl_placeHolderNewWord = new AmbianceLabel();
             this.txt_newCustomWord = new MetroFramework.Controls.MetroTextBox();
             this.pnl_NewSingle = new System.Windows.Forms.Panel();
             this.btn_changeMode1 = new MetroFramework.Controls.MetroButton();
             this.btn_StartNewSession = new MetroFramework.Controls.MetroButton();
-            this.ambiance_Label5 = new Ambiance.Ambiance_Label();
-            this.ambiance_Label3 = new Ambiance.Ambiance_Label();
-            this.ambiance_Label2 = new Ambiance.Ambiance_Label();
-            this.ambiance_Label4 = new Ambiance.Ambiance_Label();
+            this.ambiance_Label5 = new AmbianceLabel();
+            this.ambiance_Label3 = new AmbianceLabel();
+            this.ambiance_Label2 = new AmbianceLabel();
+            this.ambiance_Label4 = new AmbianceLabel();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.lbl_AttemptsLeft = new MetroFramework.Controls.MetroLabel();
             this.lbl_PlaceHolderNextPhase = new MetroFramework.Controls.MetroLabel();
@@ -70,9 +73,9 @@ namespace Hangman
             this.styleManager = new MetroFramework.Components.MetroStyleManager(this.components);
             this.tmr_Theme = new System.Windows.Forms.Timer(this.components);
             this.btn_definition = new MetroFramework.Controls.MetroButton();
-            this.lbl_PROMPT = new Ambiance.Ambiance_Label();
-            this.ambiance_Separator2 = new Ambiance.Ambiance_Separator();
-            this.ambiance_Separator1 = new Ambiance.Ambiance_Separator();
+            this.lbl_PROMPT = new AmbianceLabel();
+            this.ambiance_Separator2 = new AmbianceSeparator();
+            this.ambiance_Separator1 = new AmbianceSeparator();
             this.pnl_Win.SuspendLayout();
             this.pnl_Loss.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -238,6 +241,7 @@ namespace Hangman
             this.btn_go.Text = "GO";
             this.btn_go.UseCustomBackColor = true;
             this.btn_go.UseSelectable = true;
+            this.btn_go.UseVisualStyleBackColor = false;
             this.btn_go.Click += new System.EventHandler(this.btn_go_Click);
             // 
             // btn_changeMode2
@@ -251,6 +255,7 @@ namespace Hangman
             this.btn_changeMode2.TabIndex = 37;
             this.btn_changeMode2.Text = "Change Game Mode";
             this.btn_changeMode2.UseSelectable = true;
+            this.btn_changeMode2.UseVisualStyleBackColor = false;
             this.btn_changeMode2.Click += new System.EventHandler(this.btn_changeMode_Click);
             // 
             // pnl_MultiOptions
@@ -304,7 +309,7 @@ namespace Hangman
             this.lbl_placeHolderNewWord.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(77)))));
             this.lbl_placeHolderNewWord.Location = new System.Drawing.Point(112, 10);
             this.lbl_placeHolderNewWord.Name = "lbl_placeHolderNewWord";
-            this.lbl_placeHolderNewWord.Size = new System.Drawing.Size(478, 25);
+            this.lbl_placeHolderNewWord.Size = new System.Drawing.Size(477, 25);
             this.lbl_placeHolderNewWord.TabIndex = 17;
             this.lbl_placeHolderNewWord.Text = "Type a word for the next player then press enter or \'GO\'";
             // 
@@ -351,6 +356,7 @@ namespace Hangman
             this.btn_changeMode1.TabIndex = 36;
             this.btn_changeMode1.Text = "change your game options";
             this.btn_changeMode1.UseSelectable = true;
+            this.btn_changeMode1.UseVisualStyleBackColor = false;
             this.btn_changeMode1.Click += new System.EventHandler(this.btn_ChangeMode1_Click);
             // 
             // btn_StartNewSession
@@ -364,6 +370,7 @@ namespace Hangman
             this.btn_StartNewSession.TabIndex = 35;
             this.btn_StartNewSession.Text = "start a new game";
             this.btn_StartNewSession.UseSelectable = true;
+            this.btn_StartNewSession.UseVisualStyleBackColor = false;
             this.btn_StartNewSession.Click += new System.EventHandler(this.btn_StartNewSession_Click);
             // 
             // ambiance_Label5
@@ -410,7 +417,7 @@ namespace Hangman
             this.ambiance_Label4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(77)))));
             this.ambiance_Label4.Location = new System.Drawing.Point(80, 9);
             this.ambiance_Label4.Name = "ambiance_Label4";
-            this.ambiance_Label4.Size = new System.Drawing.Size(136, 30);
+            this.ambiance_Label4.Size = new System.Drawing.Size(134, 30);
             this.ambiance_Label4.TabIndex = 26;
             this.ambiance_Label4.Text = "You can now";
             // 
@@ -444,7 +451,7 @@ namespace Hangman
             // metroLabel4
             // 
             this.metroLabel4.AutoSize = true;
-            this.metroLabel4.Location = new System.Drawing.Point(312, 60);
+            this.metroLabel4.Location = new System.Drawing.Point(303, 60);
             this.metroLabel4.Name = "metroLabel4";
             this.metroLabel4.Size = new System.Drawing.Size(77, 19);
             this.metroLabel4.TabIndex = 30;
@@ -495,6 +502,7 @@ namespace Hangman
             this.btn_definition.TabIndex = 37;
             this.btn_definition.Text = "Request Definition";
             this.btn_definition.UseSelectable = true;
+            this.btn_definition.UseVisualStyleBackColor = false;
             this.btn_definition.Visible = false;
             this.btn_definition.Click += new System.EventHandler(this.btn_definition_Click);
             // 
@@ -506,7 +514,7 @@ namespace Hangman
             this.lbl_PROMPT.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(76)))), ((int)(((byte)(77)))));
             this.lbl_PROMPT.Location = new System.Drawing.Point(217, 184);
             this.lbl_PROMPT.Name = "lbl_PROMPT";
-            this.lbl_PROMPT.Size = new System.Drawing.Size(306, 25);
+            this.lbl_PROMPT.Size = new System.Drawing.Size(305, 25);
             this.lbl_PROMPT.TabIndex = 20;
             this.lbl_PROMPT.Text = "Click or Type your first letter guess.";
             // 
@@ -587,39 +595,39 @@ namespace Hangman
         private Label loss_LossMessage;
         private Label loss_LookingFor;
         private Label loss_CorrectWord;
-        private Ambiance.Ambiance_Label ambiance_Label5;
-        private Ambiance.Ambiance_Label lbl_PROMPT;
-        private Ambiance.Ambiance_Separator ambiance_Separator2;
+        private AmbianceLabel ambiance_Label5;
+        private AmbianceLabel lbl_PROMPT;
+        private AmbianceSeparator ambiance_Separator2;
         private Panel pnl_KeyPad;
         private PictureBox pictureBox1;
         private Panel panel1;
         private Button btn_showInput;
         private Panel pnl_NewMulti;
-        private Ambiance.Ambiance_Label ambiance_Label1;
-        private Ambiance.Ambiance_Label lbl_placeHolderNewWord;
-        private Ambiance.Ambiance_Label ambiance_Label2;
-        private Ambiance.Ambiance_Label ambiance_Label4;
-        private Ambiance.Ambiance_Separator ambiance_Separator1;
+        private AmbianceLabel ambiance_Label1;
+        private AmbianceLabel lbl_placeHolderNewWord;
+        private AmbianceLabel ambiance_Label2;
+        private AmbianceLabel ambiance_Label4;
+        private AmbianceSeparator ambiance_Separator1;
         private Panel pnl_NewSingle;
-        private Ambiance.Ambiance_Label ambiance_Label3;
-        private MetroFramework.Controls.MetroLabel metroLabel1;
-        private MetroFramework.Controls.MetroLabel lbl_AttemptsLeft;
-        private MetroFramework.Controls.MetroLabel lbl_PlaceHolderNextPhase;
-        private MetroFramework.Controls.MetroLabel metroLabel4;
-        private MetroFramework.Controls.MetroLabel lbl_IncorrectGuesses;
-        private MetroFramework.Controls.MetroLabel metroLabel6;
-        private MetroFramework.Controls.MetroProgressBar metroProgressBar1;
-        private MetroFramework.Controls.MetroTextBox txt_newCustomWord;
-        private MetroFramework.Controls.MetroButton btn_StartNewSession;
-        private MetroFramework.Controls.MetroButton btn_changeMode1;
-        private MetroFramework.Controls.MetroButton btn_changeMode2;
-        private MetroFramework.Controls.MetroButton btn_go;
+        private AmbianceLabel ambiance_Label3;
+        private MetroLabel metroLabel1;
+        private MetroLabel lbl_AttemptsLeft;
+        private MetroLabel lbl_PlaceHolderNextPhase;
+        private MetroLabel metroLabel4;
+        private MetroLabel lbl_IncorrectGuesses;
+        private MetroLabel metroLabel6;
+        private MetroProgressBar metroProgressBar1;
+        private MetroTextBox txt_newCustomWord;
+        private MetroButton btn_StartNewSession;
+        private MetroButton btn_changeMode1;
+        private MetroButton btn_changeMode2;
+        private MetroButton btn_go;
         private Panel pnl_MultiOptions;
-        private MetroFramework.Controls.MetroCheckBox chk_RevealWord;
-        private MetroFramework.Controls.MetroCheckBox chk_hideInput;
-        private MetroFramework.Components.MetroStyleManager styleManager;
+        private MetroCheckBox chk_RevealWord;
+        private MetroCheckBox chk_hideInput;
+        private MetroStyleManager styleManager;
         private Timer tmr_Theme;
-        private MetroFramework.Controls.MetroButton btn_definition;
+        private MetroButton btn_definition;
 
     }
 }

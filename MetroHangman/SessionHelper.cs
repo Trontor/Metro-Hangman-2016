@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using MetroHangman.Properties;
 
-namespace Hangman
+namespace MetroHangman
 {
     public static class SessionHelper
     {
@@ -20,7 +17,7 @@ namespace Hangman
         /// </summary>
         /// <param name="word">Word to use for new session</param>
         /// <param name="parameters">Instance of class MPParameters</param>
-        public static void NewMultiplayer(string word, MPParameters parameters)
+        public static void NewMultiplayer(string word, MpParameters parameters)
         {
             //Starts a new session using parameters and enum values
             new Session(word, Session.GameType.Multi,Difficulty.Common, parameters).Show();
@@ -33,7 +30,7 @@ namespace Hangman
         {
             
             //Starts a new session using difficulty level
-            new Session(ChooseWord(type), Session.GameType.Single, type) { StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen }.Show();
+            new Session(ChooseWord(type), Session.GameType.Single, type) { StartPosition = FormStartPosition.CenterScreen }.Show();
         }
         /// <summary>
         /// Chooses a random word
@@ -45,17 +42,12 @@ namespace Hangman
             if (type == Difficulty.Common)
             {
                 //Creates an array of common words from a file
-                string[] commonWords = MetroHangman.Properties.Resources.Common_Words.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                string[] commonWords = Resources.Common_Words.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
                 //Grabs a word using a randomly generated index of the array
                 return commonWords[new Random().Next(commonWords.Length - 1)].Trim().Replace("-", "");
             }
-            else
-            {
-                string[] hardWords = MetroHangman.Properties.Resources.Harder_Words.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
-                return hardWords[new Random().Next(hardWords.Length - 1)].Trim().Replace("-", "");
-            }
-
-
+            string[] hardWords = Resources.Harder_Words.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            return hardWords[new Random().Next(hardWords.Length - 1)].Trim().Replace("-", "");
         }
     }
 }

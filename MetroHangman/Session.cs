@@ -1,23 +1,18 @@
-﻿using Ambiance;
-using MetroFramework;
-using MetroFramework.Controls;
-using MetroFramework.Forms;
-using MetroHangman;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using System.Windows.Forms;
+using MetroFramework;
+using MetroFramework.Controls;
+using MetroFramework.Forms;
 
-namespace Hangman
+namespace MetroHangman
 {
-    public partial class Session : MetroForm
+    public sealed partial class Session : MetroForm
     {
-        bool SystemClose = true;
+        private bool _systemClose = true;
         public enum GameType
         {
             Single,
@@ -28,57 +23,59 @@ namespace Hangman
         /// <summary>
         /// Initialising variables
         /// </summary>
-
-        GameType gameType;
-        private MPParameters MultiplayerParams;
-        private bool GameRunning = true;
-        private List<char> WrongLetters = new List<char>();
-        private List<char> CorrectLetters = new List<char>();
-        private string Word = "";
-        private bool BaseDrawn = false;
-        private int Phase = 1;
-        Dictionary<int, string> phaseNames = new Dictionary<int, string>();
-        SessionHelper.Difficulty levelDifficulty = SessionHelper.Difficulty.Common;
+        private readonly GameType _gameType;
+        private readonly MpParameters _multiplayerParams;
+        private bool _gameRunning = true;
+        private readonly List<char> _wrongLetters = new List<char>();
+        private readonly List<char> _correctLetters = new List<char>();
+        private readonly string _word;
+        private bool _baseDrawn;
+        private int _phase = 1;
+        private readonly Dictionary<int, string> _phaseNames = new Dictionary<int, string>();
+        private readonly SessionHelper.Difficulty _levelDifficulty;
 
         /// <summary>
         /// Function called when form is loaded
         /// </summary>
-        /// <param name="Word"></param>
+        /// <param name="word"></param>
         /// <param name="type"></param>
         /// <param name="difficulty"></param>
         /// <param name="parameters"></param>
-        public Session(string Word, Session.GameType type, SessionHelper.Difficulty difficulty = SessionHelper.Difficulty.Common, MPParameters parameters = null)
+        public Session(string word, GameType type, SessionHelper.Difficulty difficulty = SessionHelper.Difficulty.Common, MpParameters parameters = null)
         {
             InitializeComponent();
             Height = 520
                 ;
             //converts word to upper case just in case it isn't already
-            this.Word = Word.ToUpper();
-            gameType = type;
+            _word = word.ToUpper();
+            _gameType = type;
 
-            ///Initialising phase names for each letter incorrect
-            phaseNames.Add(1, "Base");
-            phaseNames.Add(2, "Post");
-            phaseNames.Add(3, "Support 1");
-            phaseNames.Add(4, "Support 2");
-            phaseNames.Add(5, "Overhead");
-            phaseNames.Add(6, "Noose");
-            phaseNames.Add(7, "Head");
-            phaseNames.Add(8, "Body");
-            phaseNames.Add(9, "Left Arm");
-            phaseNames.Add(10, "Right Arm");
-            phaseNames.Add(11, "Left Leg");
-            phaseNames.Add(12, "Right Leg (R.I.P)");
-            phaseNames.Add(13, "RIP IN PEPPERONIES");
-            if (gameType == GameType.Multi)
+            //Initialising phase names for each letter incorrect
+            _phaseNames.Add(1, "Base");
+            _phaseNames.Add(2, "Post");
+            _phaseNames.Add(3, "Support 1");
+            _phaseNames.Add(4, "Support 2");
+            _phaseNames.Add(5, "Overhead");
+            _phaseNames.Add(6, "Noose");
+            _phaseNames.Add(7, "Head");
+            _phaseNames.Add(8, "Body");
+            _phaseNames.Add(9, "Left Arm");
+            _phaseNames.Add(10, "Right Arm");
+            _phaseNames.Add(11, "Left Leg");
+            _phaseNames.Add(12, "Right Leg (R.I.P)");
+            _phaseNames.Add(13, "RIP IN PEPPERONIES");
+            if (_gameType == GameType.Multi)
             {
-                MultiplayerParams = parameters;
-                chk_RevealWord.Checked = MultiplayerParams.RevealWord;
-                chk_hideInput.Checked = MultiplayerParams.HideWord;
+                _multiplayerParams = parameters;
+                if (_multiplayerParams != null)
+                {
+                    chk_RevealWord.Checked = _multiplayerParams.RevealWord;
+                    chk_hideInput.Checked = _multiplayerParams.HideWord;
+                }
             }
-            levelDifficulty = difficulty;
+            _levelDifficulty = difficulty;
             //Sets text for top of form
-            Text = "Game Session - " + levelDifficulty.ToString() + " Words";
+            Text = "Game Session - " + _levelDifficulty + " Words";
 
         }
 
@@ -98,23 +95,23 @@ namespace Hangman
             char[] array2 = array;
 
             //Loops through all the letters 
-            for (int i = 0; i < array2.Length; i++)
+            foreach (char c in array2)
             {
-                //Grabs letter using index of variable from 'for' loop
-                char c = array2[i];
                 //Creates a new button
-                MetroButton button = new MetroButton();
-                button.BackColor = Color.White;
-                button.UseCustomBackColor = true;
-                button.FontSize = MetroFramework.MetroButtonSize.Small;
-                button.FontWeight = MetroFramework.MetroButtonWeight.Regular;
+                MetroButton button = new MetroButton
+                {
+                    BackColor = Color.White,
+                    UseCustomBackColor = true,
+                    FontSize = MetroButtonSize.Small,
+                    FontWeight = MetroButtonWeight.Regular,
+                    Width = pnl_KeyPad.Width/13 - num,
+                    Height = 30,
+                    Text = c.ToString()
+                };
                 //Using ratios, calculates the width of the letter for the keypad, accounts for padding amount
-                button.Width = pnl_KeyPad.Width / 13 - num;
-                button.Height = 30;
                 //Assigns the letter to the button
-                button.Text = c.ToString();
                 //Creates an event handler for when the letter is pressed
-                button.Click += new EventHandler(button_Click);
+                button.Click += button_Click;
                 //Creates a variable to handle the x value position for the button
                 int x;
                 if (pnl_KeyPad.Controls.Count > 12)
@@ -127,7 +124,7 @@ namespace Hangman
                     x = pnl_KeyPad.Controls.Count * (button.Width + num);
                 }
                 //Places button onto keypad.
-                button.Location = new Point(x, (pnl_KeyPad.Controls.Count >= 13) ? (button.Height + num2) : 0);
+                button.Location = new Point(x, pnl_KeyPad.Controls.Count >= 13 ? button.Height + num2 : 0);
                 pnl_KeyPad.Controls.Add(button);
             }
             pnl_KeyPad.Width -= num;
@@ -144,30 +141,32 @@ namespace Hangman
             Font font;
 
             // Optimises font size to use the maximum amount of space as possible.
-            if (Word.Length < 13)
+            if (_word.Length < 13)
             {
                 font = new Font("Segoe UI", 35f, FontStyle.Underline);
             }
             else
             {
-                num2 = (int)(-1.64 * (double)Word.Length + 70.0);
+                num2 = (int)(-1.64 * _word.Length + 70.0);
                 height = 60;
-                font = new Font("Segoe UI", (float)(0.89 * (double)num2 - 5.05), FontStyle.Underline);
+                font = new Font("Segoe UI", (float)(0.89 * num2 - 5.05), FontStyle.Underline);
             }
             //Checks if the base is not drawn. The base is the lines without any letters revealed.
-            if (!BaseDrawn)
+            if (!_baseDrawn)
             {
                 //Loops through each letter in the word and creates a placeholder for each letter.
-                for (int i = 0; i < Word.Length; i++)
+                for (int i = 0; i < _word.Length; i++)
                 {
-                    Label label = new Label();
-                    label.Name = Word[i].ToString().ToUpper();
-                    label.Height = height;
-                    label.Width = num2;
-                    label.Font = font;
-                    label.TextAlign = ContentAlignment.MiddleCenter;
-                    label.Text = " ";
-                    label.ForeColor = Color.Black;
+                    Label label = new Label
+                    {
+                        Name = _word[i].ToString().ToUpper(),
+                        Height = height,
+                        Width = num2,
+                        Font = font,
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        Text = " ",
+                        ForeColor = Color.Black
+                    };
                     letterbase.Controls.Add(label);
                     label.Location = new Point(i * label.Width, 0);
                     num += label.Width;
@@ -176,7 +175,7 @@ namespace Hangman
                 letterbase.Height = height;
                 letterbase.Left = (letterbase.Parent.Width - letterbase.Width) / 2 + 10;
                 letterbase.Top = (letterbase.Parent.Height - letterbase.Height) / 2;
-                BaseDrawn = true;
+                _baseDrawn = true;
             }
             //If the base is already drawn
             else
@@ -185,16 +184,16 @@ namespace Hangman
                 foreach (Label label in letterbase.Controls)
                 {
                     //Checks if the letter for the placeholder has been guessed yet
-                    if (CorrectLetters.Contains(label.Name.ToArray<char>()[0]))
+                    if (_correctLetters.Contains(label.Name.ToArray()[0]))
                     {
                         //if the letter has been guessed, the letter is shown to the user
                         label.Font = new Font(font, FontStyle.Regular);
-                        label.Text = label.Name.ToArray<char>()[0].ToString();
+                        label.Text = label.Name.ToArray()[0].ToString();
                     }
                 }
             }
             //Checks if all the letters have been revealed
-            if (CorrectLetters.Count == RemoveDuplicates(Word).Length)
+            if (_correctLetters.Count == RemoveDuplicates(_word).Length)
             {
                 ShowWin();
             }
@@ -219,10 +218,10 @@ namespace Hangman
         private void HandleButtonPress(object sender)
         {
             //Checks if the game is still running
-            if (GameRunning)
+            if (_gameRunning)
             {
                 //Converts the calling button of the function into a local button
-                MetroButton ambiance_Button_ = sender as MetroButton;
+                MetroButton ambianceButton = sender as MetroButton;
                 //Checks if the text 'Click or Type your first letter guess.' label is visible.
                 if (lbl_PROMPT.Visible)
                 {
@@ -230,21 +229,22 @@ namespace Hangman
                     lbl_PROMPT.Visible = false;
                 }
                 //Checks if the button of the letter pressed is still visible (meaning it has not been guessed yet).
-                if ((sender as MetroButton).Visible)
+                var metroButton = sender as MetroButton;
+                if (metroButton != null && metroButton.Visible)
                 {
                     //Checks if the word contains the letter the user pressed.
-                    if (Word.Contains(ambiance_Button_.Text))
+                    if (_word.Contains(ambianceButton.Text))
                     {
                         //Calls the RightChoice function, passing the correct letter pressed.
-                        RightChoice(ambiance_Button_.Text[0]);
+                        RightChoice(ambianceButton.Text[0]);
                     }
                     else
                     {
                         //Calls the WrongChoice function because the letter guessed was not in the word.
-                        WrongChoice(ambiance_Button_.Text[0]);
+                        WrongChoice(ambianceButton.Text[0]);
                     }
                     //Makes the button invisible so the user cannot guess the letter again
-                    (sender as MetroButton).Visible = false;
+                    ((MetroButton) sender).Visible = false;
                 }
                 //Calculates the statistics shown on the form to the user
                 CalculateStatistics();
@@ -253,12 +253,12 @@ namespace Hangman
         /// <summary>
         /// Strips the word of duplicate letters in order to get the amount of guesses the user needs to win.
         /// </summary>
-        /// <param name="Word">The word the duplicate letters need to be removed</param>
+        /// <param name="word">The word the duplicate letters need to be removed</param>
         /// <returns></returns>
-        private string RemoveDuplicates(string Word)
+        private string RemoveDuplicates(string word)
         {
             //Uses LinQ  to remove duplicates
-            return new string(Word.ToCharArray().Distinct<char>().ToArray<char>());
+            return new string(word.ToCharArray().Distinct().ToArray());
         }
         /// <summary>
         /// Handles when the user makes a wrong guess.
@@ -267,13 +267,13 @@ namespace Hangman
         private void WrongChoice(char letter)
         {
             //Adds the letter to a list of all incorrect guesses the user has made.
-            WrongLetters.Add(letter);
+            _wrongLetters.Add(letter);
             //Draws next phase of the hangman animation.
-            pictureBox1.Image = DrawHangman(Phase);
+            pictureBox1.Image = DrawHangman(_phase);
             //Increments the phase variable so next time the proceeding phase is drawn.
-            Phase++;
+            _phase++;
             //Checks if all phases have been complete.
-            if (Phase == 13)
+            if (_phase == 13)
             {
                 //If so, the loss procedure is called.
                 ShowLoss();
@@ -287,9 +287,9 @@ namespace Hangman
         private void RightChoice(char letter)
         {
             //Adds the letter to the list of correctly guessed letters so the letter is revealed to the user.
-            CorrectLetters.Add(letter);
+            _correctLetters.Add(letter);
             //Adjusts the progress bar to account for the newly guessed letter.
-            metroProgressBar1.Value = (int)((float)CorrectLetters.Count / (float)RemoveDuplicates(Word).Length * 100f);
+            metroProgressBar1.Value = (int)(_correctLetters.Count / (float)RemoveDuplicates(_word).Length * 100f);
             //Redraws the letter base, therefore revealing the letter to the user.
             UpdateLetters();
         }
@@ -300,12 +300,12 @@ namespace Hangman
         private void CalculateStatistics()
         {
             //Checks if the game is still running.
-            if (GameRunning)
+            if (_gameRunning)
             {
-                lbl_IncorrectGuesses.Text = WrongLetters.Count.ToString();
-                lbl_AttemptsLeft.Text = (12 - WrongLetters.Count).ToString();
+                lbl_IncorrectGuesses.Text = _wrongLetters.Count.ToString();
+                lbl_AttemptsLeft.Text = (12 - _wrongLetters.Count).ToString();
             }
-            if (Phase == 13)
+            if (_phase == 13)
             {
                 //Finalises the text showing the phases
                 lbl_PlaceHolderNextPhase.Text = "Man is dead.";
@@ -314,32 +314,32 @@ namespace Hangman
             }
             //Shows description of next phase
             else
-                lbl_PlaceHolderNextPhase.Text = phaseNames[Phase];
+                lbl_PlaceHolderNextPhase.Text = _phaseNames[_phase];
 
         }
 
         /// <summary>
         /// Recursive function that draws the hangman and returns as an Image object.
         /// </summary>
-        /// <param name="Phase">The phase to draw up till.</param>
+        /// <param name="phase">The phase to draw up till.</param>
         /// <returns></returns>
-        private Image DrawHangman(int Phase)
+        private Image DrawHangman(int phase)
         {
             //Variable to store hangman
             Image image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             //Ratio of head of man to width of picturebox
             int num = 20;
-            if (Phase > 1)
-                image = new Bitmap(DrawHangman(Phase - 1)); //Draws all other phases before the current one, then continues.
+            if (phase > 1)
+                image = new Bitmap(DrawHangman(phase - 1)); //Draws all other phases before the current one, then continues.
             using (Graphics graphics = Graphics.FromImage(image))
             {
                 //Smooths the Hangman drawn
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                using (Pen pen = new Pen(MetroHangman.Properties.Settings.Default.DiscoOn?
-                     (Color)(typeof(MetroColors)).GetMethod("get_" + Style.ToString()).Invoke(new MetroColors(), null) :
+                using (Pen pen = new Pen(Properties.Settings.Default.DiscoOn?
+                     (Color)typeof(MetroColors).GetMethod("get_" + Style).Invoke(new MetroColors(), null) :
                 Color.Black, 2f))
                 {
-                    switch (Phase)
+                    switch (phase)
                     {
                         //The generated image is dynamic, which means that if the form is resized, the hangman is resized proportionally.
                         case 1:
@@ -399,15 +399,15 @@ namespace Hangman
             LoadKeyPad();
             UpdateLetters();
             CenterForm();
-            Style = MetroHangman.Properties.Settings.Default.Theme;
+            Style = Properties.Settings.Default.Theme;
             styleManager.Style = Style;
         }
         /// <summary>
         /// Centers form to screen
         /// </summary>
-        void CenterForm()
+        private void CenterForm()
         {
-            this.Location = new Point(Screen.PrimaryScreen.WorkingArea.Size.Width / 2 - Width / 2, Screen.PrimaryScreen.WorkingArea.Size.Height / 2 - Height / 2);
+            Location = new Point(Screen.PrimaryScreen.WorkingArea.Size.Width / 2 - Width / 2, Screen.PrimaryScreen.WorkingArea.Size.Height / 2 - Height / 2);
         }
 
         /// <summary>
@@ -415,10 +415,10 @@ namespace Hangman
         /// </summary>
         private void ShowFooter()
         {
-            if (gameType == GameType.Single)
+            if (_gameType == GameType.Single)
                 btn_definition.Visible = true;
             pnl_KeyPad.Visible = false;
-            pnl_NewMulti.Visible = (gameType == GameType.Multi);
+            pnl_NewMulti.Visible = _gameType == GameType.Multi;
             pnl_NewSingle.Visible = !pnl_NewMulti.Visible;
             if (pnl_NewMulti.Visible)
                 txt_newCustomWord.Focus();
@@ -449,12 +449,12 @@ namespace Hangman
             // Shows the panel describing the loss
             pnl_Loss.Visible = true;
             //Shows the correct word.
-            loss_CorrectWord.Text = Word;
+            loss_CorrectWord.Text = _word;
             //Handles a multiplayer loss
-            if (gameType == GameType.Multi)
+            if (_gameType == GameType.Multi)
             {
                 //Checks if Player 1 wishes to reveal the word to Player 2.
-                if (!MultiplayerParams.RevealWord)
+                if (!_multiplayerParams.RevealWord)
                 {
                     loss_CorrectWord.Text = "Player 1 chose to not reveal the word to you. Sorry!";
                     loss_CorrectWord.Font = new Font("Segoe UI", 15, FontStyle.Bold);
@@ -464,7 +464,7 @@ namespace Hangman
             else
             {
                 //Adds a loss to the user's profile.
-                Profiler.AddLoss(levelDifficulty);
+                Profiler.AddLoss(_levelDifficulty);
             }
             //Shows randomised ending.
             loss_LookingFor.Text = RandomWord(wordBase);
@@ -473,7 +473,7 @@ namespace Hangman
             //Shows the footer to the user, subsequently showing the loss panel.
             ShowFooter();
             //Sets variable 'GameRunning' to false to notify other functions that the game is not in progress.
-            GameRunning = false;
+            _gameRunning = false;
         }
 
         /// <summary>
@@ -482,15 +482,15 @@ namespace Hangman
         private void ShowWin()
         {
             //Checks if the win is in the singleplayer mode
-            if (gameType == GameType.Single)
+            if (_gameType == GameType.Single)
             {
                 //Adds win to the profile only if singleplayer (combats profile win farming).
-                Profiler.AddWin(levelDifficulty);
+                Profiler.AddWin(_levelDifficulty);
             }
             //Shows the 'Win' panel.
             pnl_Win.Visible = true;
             //Shows the word that was guessed correctly.
-            loss_CorrectWord.Text = Word;
+            loss_CorrectWord.Text = _word;
             //List of text to show to the user congratulating them.
             win_Main.Text = RandomWord(new List<string>
 			{
@@ -499,22 +499,22 @@ namespace Hangman
 				"I'd give you a ribbon if I could. Good Job on Winning!"
 			});
             //Calculates the degree of excitedness to present to the user based off how many guesses they made.
-            var attemptEvaluation = AttemptEval(WrongLetters.Count<char>());
+            var attemptEvaluation = AttemptEval(_wrongLetters.Count);
             //Sets the colour for the text in respect to their closeness to losing.
             win_Attempts.ForeColor = attemptEvaluation.Item2;
             //Tells the user how many incorrect guesses they made.
-            win_Attempts.Text = string.Format("You {0} {1} incorrect guesses.", attemptEvaluation.Item1, WrongLetters.Count);
+            win_Attempts.Text = $"You {attemptEvaluation.Item1} {_wrongLetters.Count} incorrect guesses.";
             //Shows the footer to the user, subsequently showing the loss panel.
             ShowFooter();
             //Sets variable 'GameRunning' to false to notify other functions that the game is not in progress.
-            GameRunning = false;
+            _gameRunning = false;
         }
 
         /// <summary>
         /// Evalutes the succesfulness of the user based on the amount of attempts they made.
         /// </summary>
         /// <param name="attempts">The amount of attempts the user made.</param>
-        /// <returns>A Tuple object, which is just an object that holds two other objects.</returns
+        /// <returns>A Tuple object, which is just an object that holds two other objects.</returns>
         private Tuple<string, Color> AttemptEval(int attempts)
         {
             string result;
@@ -562,13 +562,13 @@ namespace Hangman
         private void ChangeGameOptions()
         {
             // If the game is not running, it directly takes the user back to the main menu.
-            if (!GameRunning)
+            if (!_gameRunning)
                 CloseForm();
             else
             {
                 //If the game is running, it will ask the user to confirm that they want to leave the current game and discard their progress.
                 DialogResult diag = MessageBox.Show("You have pressed the escape button while you are in a session.\nWould you like to exit this session (your progress will not be saved)?", "Confirm Exit", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
-                if (diag == System.Windows.Forms.DialogResult.Yes)
+                if (diag == DialogResult.Yes)
                     CloseForm();
             }
         }
@@ -587,11 +587,11 @@ namespace Hangman
             //Checks if the key pressed is a letter.
             if ((keyData < Keys.F1 || keyData > Keys.F12) && char.IsLetter((char)keyData))
             {
-                foreach (MetroButton ambiance_Button_ in pnl_KeyPad.Controls)
+                foreach (MetroButton ambianceButton in pnl_KeyPad.Controls)
                 {
-                    if (ambiance_Button_.Text == keyData.ToString())
+                    if (ambianceButton.Text == keyData.ToString())
                     {
-                        HandleButtonPress(ambiance_Button_);
+                        HandleButtonPress(ambianceButton);
                     }
                 }
             }
@@ -607,7 +607,7 @@ namespace Hangman
         /// </summary>
         private void NewSinglePlayer()
         {
-            SessionHelper.NewSinglePlayer(levelDifficulty);
+            SessionHelper.NewSinglePlayer(_levelDifficulty);
             CloseForm();
         }
 
@@ -618,7 +618,7 @@ namespace Hangman
         {
             if (txt_newCustomWord.Text.Length == 0)
                 MessageBox.Show("Before you can begin a new multiplayer session you must type a word for Player 2 to guess.", "Invalid Entry", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            SessionHelper.NewMultiplayer(txt_newCustomWord.Text, new MPParameters(chk_RevealWord.Checked, chk_hideInput.Checked));
+            SessionHelper.NewMultiplayer(txt_newCustomWord.Text, new MpParameters(chk_RevealWord.Checked, chk_hideInput.Checked));
             CloseForm();
         }
 
@@ -631,14 +631,14 @@ namespace Hangman
         private void btn_StartNewSession_Click(object sender, EventArgs e)
         {
             //Starts a new singleplayer session using the same level of difficulty.
-            SessionHelper.NewSinglePlayer(levelDifficulty);
+            SessionHelper.NewSinglePlayer(_levelDifficulty);
             //Closes form.
             CloseForm();
         }
 
         private void CloseForm()
         {
-            SystemClose = false;
+            _systemClose = false;
             Close();
         }
         private void btn_ChangeMode1_Click(object sender, EventArgs e)
@@ -702,7 +702,7 @@ namespace Hangman
 
         private void Session_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (SystemClose)
+            if (_systemClose)
                 foreach (Control c in Application.OpenForms[0].Controls)
                 {
                     if (c is MetroLabel)
@@ -715,6 +715,7 @@ namespace Hangman
         }
 
 
+/*
         private void RandomStyle()
         {
             var m = new Random();
@@ -722,23 +723,26 @@ namespace Hangman
             SetColour((MetroColorStyle)next);
 
         }
+*/
+/*
         private void SetColour(MetroColorStyle style)
         {
             styleManager.Style = style;
             Style = styleManager.Style;
-            MetroHangman.Properties.Settings.Default.Theme = Style;
-            MetroHangman.Properties.Settings.Default.Save();
+            Properties.Settings.Default.Theme = Style;
+            Properties.Settings.Default.Save();
 
             //            btn_color.BackColor = (Color)theMethod.Invoke(c, null);
             Invalidate();
         }
+*/
 
 
         private void tmr_Disco_Tick(object sender, EventArgs e)
         {
-            styleManager.Style = MetroHangman.Properties.Settings.Default.Theme;
-            this.Style = styleManager.Style;
-            pictureBox1.Image = DrawHangman(Phase - 1);
+            styleManager.Style = Properties.Settings.Default.Theme;
+            Style = styleManager.Style;
+            pictureBox1.Image = DrawHangman(_phase - 1);
         }
 
         private void pnl_NewMulti_Paint(object sender, PaintEventArgs e)
@@ -748,7 +752,7 @@ namespace Hangman
 
         private void btn_definition_Click(object sender, EventArgs e)
         {
-            new Definition(Word).ShowDialog();
+            new Definition(_word).ShowDialog();
         }
     }
 }
