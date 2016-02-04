@@ -126,7 +126,8 @@ namespace MetroHangman
             // 
             // tmr_Theme
             // 
-            this.tmr_Theme.Interval = 999;
+            this.tmr_Theme.Enabled = true;
+            this.tmr_Theme.Interval = 1;
             this.tmr_Theme.Tick += new System.EventHandler(this.tmr_Theme_Tick);
             // 
             // metroStyleManager1
@@ -151,7 +152,6 @@ namespace MetroHangman
             this.ShadowType = MetroFramework.Forms.MetroFormShadowType.None;
             this.Text = "Settings";
             this.TextAlign = MetroFramework.Forms.MetroFormTextAlign.Center;
-            this.Load += new System.EventHandler(this.Settings_Load);
             ((System.ComponentModel.ISupportInitialize)(this.metroStyleManager1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -1,30 +1,16 @@
-﻿#region Imports
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Text;
 using System.Windows.Forms;
-
-#endregion
-
-//|------DO-NOT-REMOVE------|
-//
-// Creator: HazelDev
-// Site   : HazelDev.com
-// Created: 20.Aug.2014
-// Changed: 24.Jan.2015
-// Version: 1.2.0
-//
-//|------DO-NOT-REMOVE------|
 
 namespace MetroHangman
 {
-
     #region RoundRectangle
 
-    internal static class RoundRectangle
+    static class RoundRectangle
     {
         public static GraphicsPath RoundRect(Rectangle rectangle, int curve)
         {
@@ -83,17 +69,39 @@ namespace MetroHangman
 
         private Rectangle _headerRect;
         protected MouseState State;
-        private readonly int _moveHeight;
-        private readonly Point _mouseP = new Point(0, 0);
-        private bool _cap;
+        private int _moveHeight;
+        private Point _mouseP = new Point(0, 0);
+        private bool _cap = false;
         private bool _hasShown;
 
         #endregion
         #region  Properties
 
-        public bool Sizable { get; set; } = true;
+        private bool _sizable = true;
+        public bool Sizable
+        {
+            get
+            {
+                return _sizable;
+            }
+            set
+            {
+                _sizable = value;
+            }
+        }
 
-        public bool SmartBounds { get; set; } = true;
+        private bool _smartBounds = true;
+        public bool SmartBounds
+        {
+            get
+            {
+                return _smartBounds;
+            }
+            set
+            {
+                _smartBounds = value;
+            }
+        }
 
         private bool _roundCorners = true;
         public bool RoundCorners
@@ -109,7 +117,14 @@ namespace MetroHangman
             }
         }
 
-        protected bool IsParentForm { get; private set; }
+        private bool _isParentForm;
+        protected bool IsParentForm
+        {
+            get
+            {
+                return _isParentForm;
+            }
+        }
 
         protected bool IsParentMdi
         {
@@ -142,17 +157,20 @@ namespace MetroHangman
         {
             get
             {
-                if (IsParentForm && !_controlMode)
+                if (_isParentForm && !_controlMode)
                 {
                     return ParentForm.StartPosition;
                 }
-                return _startPosition;
+                else
+                {
+                    return _startPosition;
+                }
             }
             set
             {
                 _startPosition = value;
 
-                if (IsParentForm && !_controlMode)
+                if (_isParentForm && !_controlMode)
                 {
                     ParentForm.StartPosition = value;
                 }
@@ -170,16 +188,16 @@ namespace MetroHangman
             {
                 return;
             }
-            IsParentForm = Parent is Form;
+            _isParentForm = Parent is Form;
 
             if (!_controlMode)
             {
                 InitializeMessages();
 
-                if (IsParentForm)
+                if (_isParentForm)
                 {
-                    ParentForm.FormBorderStyle = FormBorderStyle.None;
-                    ParentForm.TransparencyKey = Color.Fuchsia;
+                    this.ParentForm.FormBorderStyle = FormBorderStyle.None;
+                    this.ParentForm.TransparencyKey = Color.Fuchsia;
 
                     if (!DesignMode)
                     {
@@ -201,14 +219,14 @@ namespace MetroHangman
             Invalidate();
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
         {
             base.OnMouseDown(e);
             if (e.Button == MouseButtons.Left)
             {
                 SetState(MouseState.Down);
             }
-            if (!(IsParentForm && ParentForm.WindowState == FormWindowState.Maximized || _controlMode))
+            if (!(_isParentForm && ParentForm.WindowState == FormWindowState.Maximized || _controlMode))
             {
                 if (_headerRect.Contains(e.Location))
                 {
@@ -216,7 +234,7 @@ namespace MetroHangman
                     _wmLmbuttondown = true;
                     DefWndProc(ref _messages[0]);
                 }
-                else if (Sizable && !(_previous == 0))
+                else if (_sizable && !(_previous == 0))
                 {
                     Capture = false;
                     _wmLmbuttondown = true;
@@ -225,29 +243,29 @@ namespace MetroHangman
             }
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp(System.Windows.Forms.MouseEventArgs e)
         {
             base.OnMouseUp(e);
             _cap = false;
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            if (!(IsParentForm && ParentForm.WindowState == FormWindowState.Maximized))
+            if (!(_isParentForm && ParentForm.WindowState == FormWindowState.Maximized))
             {
-                if (Sizable && !_controlMode)
+                if (_sizable && !_controlMode)
                 {
                     InvalidateMouse();
                 }
             }
             if (_cap)
             {
-                Parent.Location = (Point)(object)(Convert.ToDouble(MousePosition) - Convert.ToDouble(_mouseP));
+                Parent.Location = (System.Drawing.Point)(object)(System.Convert.ToDouble(MousePosition) - System.Convert.ToDouble(_mouseP));
             }
         }
 
-        protected override void OnInvalidated(InvalidateEventArgs e)
+        protected override void OnInvalidated(System.Windows.Forms.InvalidateEventArgs e)
         {
             base.OnInvalidated(e);
             ParentForm.Text = Text;
@@ -258,7 +276,7 @@ namespace MetroHangman
             base.OnPaintBackground(e);
         }
 
-        protected override void OnTextChanged(EventArgs e)
+        protected override void OnTextChanged(System.EventArgs e)
         {
             base.OnTextChanged(e);
             Invalidate();
@@ -365,7 +383,7 @@ namespace MetroHangman
             }
         }
 
-        private readonly Message[] _messages = new Message[9];
+        private Message[] _messages = new Message[9];
         private void InitializeMessages()
         {
             _messages[0] = Message.Create(Parent.Handle, 161, new IntPtr(2), IntPtr.Zero);
@@ -423,7 +441,7 @@ namespace MetroHangman
                 _wmLmbuttondown = false;
 
                 SetState(MouseState.Over);
-                if (!SmartBounds)
+                if (!_smartBounds)
                 {
                     return;
                 }
@@ -472,7 +490,7 @@ namespace MetroHangman
             g.DrawRectangle(new Pen(Color.FromArgb(38, 38, 38)), new Rectangle(9, 47, Width - 19, Height - 55));
             g.FillRectangle(new SolidBrush(Color.FromArgb(244, 241, 243)), new Rectangle(10, 48, Width - 20, Height - 56));
 
-            if (_roundCorners)
+            if (_roundCorners == true)
             {
 
                 // Draw Left upper corner
@@ -541,7 +559,7 @@ namespace MetroHangman
                 g.FillRectangle(new SolidBrush(Color.FromArgb(38, 38, 38)), Width - 3, Height - 2, 1, 1);
             }
 
-            g.DrawString(Text, new Font("Tahoma", 12, FontStyle.Bold), new SolidBrush(Color.FromArgb(223, 219, 210)), new Rectangle(0, 14, Width - 1, Height), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Near });
+            g.DrawString(Text, new Font("Tahoma", 12, FontStyle.Bold), new SolidBrush(Color.FromArgb(223, 219, 210)), new Rectangle(0, 14, Width - 1, Height), new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Near });
         }
     }
 
@@ -562,21 +580,20 @@ namespace MetroHangman
 
         #endregion
         #region  MouseStates
+        MouseState _state = MouseState.None;
+        int _x;
+        Rectangle _closeBtn = new Rectangle(3, 2, 17, 17);
+        Rectangle _minBtn = new Rectangle(23, 2, 17, 17);
+        Rectangle _maxBtn = new Rectangle(43, 2, 17, 17);
 
-        private MouseState _state = MouseState.None;
-        private int _x;
-        private readonly Rectangle _closeBtn = new Rectangle(3, 2, 17, 17);
-        private readonly Rectangle _minBtn = new Rectangle(23, 2, 17, 17);
-        private readonly Rectangle _maxBtn = new Rectangle(43, 2, 17, 17);
-
-        protected override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
         {
             base.OnMouseDown(e);
 
             _state = MouseState.Down;
             Invalidate();
         }
-        protected override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp(System.Windows.Forms.MouseEventArgs e)
         {
             base.OnMouseUp(e);
             if (_x > 3 && _x < 20)
@@ -589,7 +606,7 @@ namespace MetroHangman
             }
             else if (_x > 43 && _x < 60)
             {
-                if (_enableMaximize)
+                if (_enableMaximize == true)
                 {
                     if (FindForm().WindowState == FormWindowState.Maximized)
                     {
@@ -606,19 +623,19 @@ namespace MetroHangman
             _state = MouseState.Over;
             Invalidate();
         }
-        protected override void OnMouseEnter(EventArgs e)
+        protected override void OnMouseEnter(System.EventArgs e)
         {
             base.OnMouseEnter(e);
             _state = MouseState.Over;
             Invalidate();
         }
-        protected override void OnMouseLeave(EventArgs e)
+        protected override void OnMouseLeave(System.EventArgs e)
         {
             base.OnMouseLeave(e);
             _state = MouseState.None;
             Invalidate();
         }
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
         {
             base.OnMouseMove(e);
             _x = e.Location.X;
@@ -627,7 +644,7 @@ namespace MetroHangman
         #endregion
         #region  Properties
 
-        private bool _enableMaximize = true;
+        bool _enableMaximize = true;
         public bool EnableMaximize
         {
             get
@@ -637,13 +654,13 @@ namespace MetroHangman
             set
             {
                 _enableMaximize = value;
-                if (_enableMaximize)
+                if (_enableMaximize == true)
                 {
-                    Size = new Size(64, 22);
+                    this.Size = new Size(64, 22);
                 }
                 else
                 {
-                    Size = new Size(44, 22);
+                    this.Size = new Size(44, 22);
                 }
                 Invalidate();
             }
@@ -657,19 +674,19 @@ namespace MetroHangman
             DoubleBuffered = true;
             BackColor = Color.Transparent;
             Font = new Font("Marlett", 7);
-            Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            Anchor = AnchorStyles.Top | AnchorStyles.Left;
         }
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            if (_enableMaximize)
+            if (_enableMaximize == true)
             {
-                Size = new Size(64, 22);
+                this.Size = new Size(64, 22);
             }
             else
             {
-                Size = new Size(44, 22);
+                this.Size = new Size(44, 22);
             }
         }
 
@@ -677,16 +694,16 @@ namespace MetroHangman
         {
             base.OnCreateControl();
             // Auto-decide control location on the theme container
-          //  Location = new Point(5, 13);
+            Location = new Point(5, 13);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
         {
             Bitmap b = new Bitmap(Width, Height);
             Graphics g = Graphics.FromImage(b);
 
             base.OnPaint(e);
-            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
             LinearGradientBrush lgbClose = new LinearGradientBrush(_closeBtn, Color.FromArgb(242, 132, 99), Color.FromArgb(224, 82, 33), 90);
             g.FillEllipse(lgbClose, _closeBtn);
@@ -698,7 +715,7 @@ namespace MetroHangman
             g.DrawEllipse(new Pen(Color.FromArgb(57, 56, 53)), _minBtn);
             g.DrawString("0", new Font("Marlett", 7), new SolidBrush(Color.FromArgb(52, 50, 46)), new Rectangle(26, (int)4.4, 0, 0));
 
-            if (_enableMaximize)
+            if (_enableMaximize == true)
             {
                 LinearGradientBrush lgbMaximize = new LinearGradientBrush(_maxBtn, Color.FromArgb(130, 129, 123), Color.FromArgb(103, 102, 96), 90);
                 g.FillEllipse(lgbMaximize, _maxBtn);
@@ -719,7 +736,7 @@ namespace MetroHangman
                     g.DrawEllipse(new Pen(Color.FromArgb(57, 56, 53)), _minBtn);
                     g.DrawString("0", new Font("Marlett", 7), new SolidBrush(Color.FromArgb(52, 50, 46)), new Rectangle(26, (int)4.4, 0, 0));
 
-                    if (_enableMaximize)
+                    if (_enableMaximize == true)
                     {
                         LinearGradientBrush xLgbMaximize = new LinearGradientBrush(_maxBtn, Color.FromArgb(130, 129, 123), Color.FromArgb(103, 102, 96), 90);
                         g.FillEllipse(xLgbMaximize, _maxBtn);
@@ -744,7 +761,7 @@ namespace MetroHangman
                     }
                     else if (_x > 43 && _x < 60)
                     {
-                        if (_enableMaximize)
+                        if (_enableMaximize == true)
                         {
                             LinearGradientBrush xLgbMaximize = new LinearGradientBrush(_maxBtn, Color.FromArgb(196, 196, 196), Color.FromArgb(173, 173, 173), 90);
                             g.FillEllipse(xLgbMaximize, _maxBtn);
@@ -764,7 +781,7 @@ namespace MetroHangman
     #endregion
     #region Button 1
 
-    internal class AmbianceButton1 : Control
+    class AmbianceButton1 : Control
     {
 
         #region Variables
@@ -775,9 +792,10 @@ namespace MetroHangman
         private LinearGradientBrush _pressedGb;
         private LinearGradientBrush _pressedContourGb;
         private Rectangle _r1;
-        private readonly Pen _p1;
+        private Pen _p1;
         private Pen _p3;
         private Image _image;
+        private Size _imageSize;
         private StringAlignment _textAlignment = StringAlignment.Center;
         private Color _textColor = Color.FromArgb(150, 150, 150);
         private ContentAlignment _imageAlign = ContentAlignment.MiddleLeft;
@@ -872,11 +890,11 @@ namespace MetroHangman
             {
                 if (value == null)
                 {
-                    ImageSize = Size.Empty;
+                    _imageSize = Size.Empty;
                 }
                 else
                 {
-                    ImageSize = value.Size;
+                    _imageSize = value.Size;
                 }
 
                 _image = value;
@@ -884,7 +902,10 @@ namespace MetroHangman
             }
         }
 
-        protected Size ImageSize { get; private set; }
+        protected Size ImageSize
+        {
+            get { return _imageSize; }
+        }
 
         public ContentAlignment ImageAlign
         {
@@ -898,21 +919,21 @@ namespace MetroHangman
 
         public StringAlignment TextAlignment
         {
-            get { return _textAlignment; }
+            get { return this._textAlignment; }
             set
             {
-                _textAlignment = value;
-                Invalidate();
+                this._textAlignment = value;
+                this.Invalidate();
             }
         }
 
         public override Color ForeColor
         {
-            get { return _textColor; }
+            get { return this._textColor; }
             set
             {
-                _textColor = value;
-                Invalidate();
+                this._textColor = value;
+                this.Invalidate();
             }
         }
 
@@ -940,7 +961,7 @@ namespace MetroHangman
             base.OnMouseLeave(e);
         }
 
-        protected override void OnTextChanged(EventArgs e)
+        protected override void OnTextChanged(System.EventArgs e)
         {
             Invalidate();
             base.OnTextChanged(e);
@@ -962,7 +983,7 @@ namespace MetroHangman
             // P1 = Border color
         }
 
-        protected override void OnResize(EventArgs e)
+        protected override void OnResize(System.EventArgs e)
         {
 
             if (Width > 0 && Height > 0)
@@ -1052,7 +1073,7 @@ namespace MetroHangman
     #endregion
     #region Button 2
 
-    internal class AmbianceButton2 : Control
+    class AmbianceButton2 : Control
     {
 
         #region Variables
@@ -1063,9 +1084,10 @@ namespace MetroHangman
         private LinearGradientBrush _pressedGb;
         private LinearGradientBrush _pressedContourGb;
         private Rectangle _r1;
-        private readonly Pen _p1;
+        private Pen _p1;
         private Pen _p3;
         private Image _image;
+        private Size _imageSize;
         private StringAlignment _textAlignment = StringAlignment.Center;
         private Color _textColor = Color.FromArgb(150, 150, 150);
         private ContentAlignment _imageAlign = ContentAlignment.MiddleLeft;
@@ -1160,11 +1182,11 @@ namespace MetroHangman
             {
                 if (value == null)
                 {
-                    ImageSize = Size.Empty;
+                    _imageSize = Size.Empty;
                 }
                 else
                 {
-                    ImageSize = value.Size;
+                    _imageSize = value.Size;
                 }
 
                 _image = value;
@@ -1172,7 +1194,10 @@ namespace MetroHangman
             }
         }
 
-        protected Size ImageSize { get; private set; }
+        protected Size ImageSize
+        {
+            get { return _imageSize; }
+        }
 
         public ContentAlignment ImageAlign
         {
@@ -1186,21 +1211,21 @@ namespace MetroHangman
 
         public StringAlignment TextAlignment
         {
-            get { return _textAlignment; }
+            get { return this._textAlignment; }
             set
             {
-                _textAlignment = value;
-                Invalidate();
+                this._textAlignment = value;
+                this.Invalidate();
             }
         }
 
         public override Color ForeColor
         {
-            get { return _textColor; }
+            get { return this._textColor; }
             set
             {
-                _textColor = value;
-                Invalidate();
+                this._textColor = value;
+                this.Invalidate();
             }
         }
 
@@ -1228,7 +1253,7 @@ namespace MetroHangman
             base.OnMouseLeave(e);
         }
 
-        protected override void OnTextChanged(EventArgs e)
+        protected override void OnTextChanged(System.EventArgs e)
         {
             Invalidate();
             base.OnTextChanged(e);
@@ -1250,7 +1275,7 @@ namespace MetroHangman
             // P1 = Border color
         }
 
-        protected override void OnResize(EventArgs e)
+        protected override void OnResize(System.EventArgs e)
         {
 
             if (Width > 0 && Height > 0)
@@ -1340,7 +1365,7 @@ namespace MetroHangman
     #endregion
     #region Label
 
-    internal class AmbianceLabel : Label
+    class AmbianceLabel : Label
     {
 
         public AmbianceLabel()
@@ -1353,8 +1378,7 @@ namespace MetroHangman
 
     #endregion
     #region Link Label
-
-    internal class AmbianceLinkLabel : LinkLabel
+    class AmbianceLinkLabel : LinkLabel
     {
 
         public AmbianceLinkLabel()
@@ -1364,14 +1388,14 @@ namespace MetroHangman
             LinkColor = Color.FromArgb(240, 119, 70);
             ActiveLinkColor = Color.FromArgb(221, 72, 20);
             VisitedLinkColor = Color.FromArgb(240, 119, 70);
-            LinkBehavior = LinkBehavior.AlwaysUnderline;
+            LinkBehavior = System.Windows.Forms.LinkBehavior.AlwaysUnderline;
         }
     }
 
     #endregion
     #region Header Label
 
-    internal class AmbianceHeaderLabel : Label
+    class AmbianceHeaderLabel : Label
     {
 
         public AmbianceHeaderLabel()
@@ -1391,10 +1415,10 @@ namespace MetroHangman
         public AmbianceSeparator()
         {
             SetStyle(ControlStyles.ResizeRedraw, true);
-            Size = new Size(120, 10);
+            this.Size = new Size(120, 10);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
         {
             base.OnPaint(e);
             e.Graphics.DrawLine(new Pen(Color.FromArgb(224, 222, 220)), 0, 5, Width, 5);
@@ -1408,7 +1432,7 @@ namespace MetroHangman
     public class AmbianceProgressBar : Control
     {
 
-        #region Enums
+        #region Enums 
 
         public enum Alignment
         {
@@ -1417,11 +1441,11 @@ namespace MetroHangman
         }
 
         #endregion
-        #region Variables
+        #region Variables 
 
         private int _minimum;
         private int _maximum = 100;
-        private int _value;
+        private int _value = 0;
         private Alignment _aln;
         private bool _drawHatch;
 
@@ -1436,7 +1460,7 @@ namespace MetroHangman
         private int _i1;
 
         #endregion
-        #region Properties
+        #region Properties 
 
         public int Maximum
         {
@@ -1516,9 +1540,9 @@ namespace MetroHangman
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            Height = 20;
+            this.Height = 20;
             Size minimumSize = new Size(58, 20);
-            MinimumSize = minimumSize;
+            this.MinimumSize = minimumSize;
         }
 
         #endregion
@@ -1536,13 +1560,13 @@ namespace MetroHangman
 
         public void Increment(int value)
         {
-            _value += value;
+            this._value += value;
             Invalidate();
         }
 
         public void Deincrement(int value)
         {
-            _value -= value;
+            this._value -= value;
             Invalidate();
         }
 
@@ -1567,7 +1591,7 @@ namespace MetroHangman
             g.FillPath(new SolidBrush(Color.FromArgb(244, 241, 243)), RoundRectangle.RoundRect(new Rectangle(1, 1, Width - 3, Height / 2 - 2), 4));
 
 
-            _i1 = (int)Math.Round((_value - _minimum) / (double)(_maximum - _minimum) * (Width - 3));
+            _i1 = (int)Math.Round((this._value - this._minimum) / (double)(this._maximum - this._minimum) * (this.Width - 3));
             if (_i1 > 1)
             {
                 _gp3 = RoundRectangle.RoundRect(new Rectangle(1, 1, _i1, Height - 3), 4);
@@ -1579,11 +1603,11 @@ namespace MetroHangman
                 g.FillPath(_gb2, _gp3);
 
                 // Draw diagonal lines
-                if (_drawHatch)
+                if (_drawHatch == true)
                 {
                     for (var i = 0; i <= (Width - 1) * _maximum / _value; i += 20)
                     {
-                        g.DrawLine(new Pen(new SolidBrush(Color.FromArgb(25, Color.White)), 10.0F), new Point(Convert.ToInt32(i), 0), new Point(i - 10, Height));
+                        g.DrawLine(new Pen(new SolidBrush(Color.FromArgb(25, Color.White)), 10.0F), new Point(System.Convert.ToInt32(i), 0), new Point(i - 10, Height));
                     }
                 }
 
@@ -1595,10 +1619,10 @@ namespace MetroHangman
 
             // Draw value as a string
             string drawString = Convert.ToString(Convert.ToInt32(Value)) + "%";
-            int textX = (int)(Width - g.MeasureString(drawString, Font).Width - 1);
-            int textY = Height / 2 - (Convert.ToInt32(g.MeasureString(drawString, Font).Height / 2) - 2);
+            int textX = (int)(this.Width - g.MeasureString(drawString, Font).Width - 1);
+            int textY = this.Height / 2 - (System.Convert.ToInt32(g.MeasureString(drawString, Font).Height / 2) - 2);
 
-            if (_showPercentage)
+            if (_showPercentage == true)
             {
                 switch (ValueAlignment)
                 {
@@ -1627,7 +1651,7 @@ namespace MetroHangman
     #endregion
     #region Progress Indicator
 
-    internal class AmbianceProgressIndicator : Control
+    class AmbianceProgressIndicator : Control
     {
 
         #region Variables
@@ -1676,7 +1700,7 @@ namespace MetroHangman
         protected override void OnEnabledChanged(EventArgs e)
         {
             base.OnEnabledChanged(e);
-            _animationSpeed.Enabled = Enabled;
+            _animationSpeed.Enabled = this.Enabled;
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -1696,14 +1720,14 @@ namespace MetroHangman
             {
                 _indicatorIndex -= 1;
             }
-            Invalidate(false);
+            this.Invalidate(false);
         }
 
         #endregion
 
         public AmbianceProgressIndicator()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer, true);
 
             Size = new Size(80, 80);
             Text = string.Empty;
@@ -1721,45 +1745,45 @@ namespace MetroHangman
         private void SetPoints()
         {
             Stack<PointF> stack = new Stack<PointF>();
-            PointF startingFloatPoint = new PointF(Width / 2f, Height / 2f);
+            PointF startingFloatPoint = new PointF(this.Width / 2f, this.Height / 2f);
             for (float i = 0f; i < 360f; i += 45f)
             {
-                SetValue(startingFloatPoint, (int)Math.Round(Width / 2.0 - 15.0), i);
-                PointF endPoint = EndPoint;
+                this.SetValue(startingFloatPoint, (int)Math.Round(this.Width / 2.0 - 15.0), i);
+                PointF endPoint = this.EndPoint;
                 endPoint = new PointF(endPoint.X - 7.5f, endPoint.Y - 7.5f);
                 stack.Push(endPoint);
             }
-            _floatPoint = stack.ToArray();
+            this._floatPoint = stack.ToArray();
         }
 
         private void UpdateGraphics()
         {
-            if ((Width > 0) && (Height > 0))
+            if ((this.Width > 0) && (this.Height > 0))
             {
-                Size size2 = new Size(Width + 1, Height + 1);
-                _graphicsContext.MaximumBuffer = size2;
-                _buffGraphics = _graphicsContext.Allocate(CreateGraphics(), ClientRectangle);
-                _buffGraphics.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                Size size2 = new Size(this.Width + 1, this.Height + 1);
+                this._graphicsContext.MaximumBuffer = size2;
+                this._buffGraphics = this._graphicsContext.Allocate(this.CreateGraphics(), this.ClientRectangle);
+                this._buffGraphics.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             }
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            _buffGraphics.Graphics.Clear(BackColor);
-            int num2 = _floatPoint.Length - 1;
+            this._buffGraphics.Graphics.Clear(this.BackColor);
+            int num2 = this._floatPoint.Length - 1;
             for (int i = 0; i <= num2; i++)
             {
-                if (_indicatorIndex == i)
+                if (this._indicatorIndex == i)
                 {
-                    _buffGraphics.Graphics.FillEllipse(_animationColor, _floatPoint[i].X, _floatPoint[i].Y, 15f, 15f);
+                    this._buffGraphics.Graphics.FillEllipse(this._animationColor, this._floatPoint[i].X, this._floatPoint[i].Y, 15f, 15f);
                 }
                 else
                 {
-                    _buffGraphics.Graphics.FillEllipse(_baseColor, _floatPoint[i].X, _floatPoint[i].Y, 15f, 15f);
+                    this._buffGraphics.Graphics.FillEllipse(this._baseColor, this._floatPoint[i].X, this._floatPoint[i].Y, 15f, 15f);
                 }
             }
-            _buffGraphics.Render(e.Graphics);
+            this._buffGraphics.Render(e.Graphics);
         }
 
 
@@ -1821,11 +1845,11 @@ namespace MetroHangman
         {
             add
             {
-                _toggledChangedEvent = (ToggledChangedEventHandler)Delegate.Combine(_toggledChangedEvent, value);
+                _toggledChangedEvent = (ToggledChangedEventHandler)System.Delegate.Combine(_toggledChangedEvent, value);
             }
             remove
             {
-                _toggledChangedEvent = (ToggledChangedEventHandler)Delegate.Remove(_toggledChangedEvent, value);
+                _toggledChangedEvent = (ToggledChangedEventHandler)System.Delegate.Remove(_toggledChangedEvent, value);
             }
         }
 
@@ -1875,7 +1899,7 @@ namespace MetroHangman
             Height = 27;
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
+        protected override void OnMouseUp(System.Windows.Forms.MouseEventArgs e)
         {
             base.OnMouseUp(e);
             Toggled = !Toggled;
@@ -1889,7 +1913,7 @@ namespace MetroHangman
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
@@ -1922,31 +1946,31 @@ namespace MetroHangman
                 case _Type.OnOff:
                     if (Toggled)
                     {
-                        g.DrawString("ON", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.WhiteSmoke, _bar.X + 18, (float)(_bar.Y + 13.5), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                        g.DrawString("ON", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.WhiteSmoke, _bar.X + 18, (float)(_bar.Y + 13.5), new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
                     }
                     else
                     {
-                        g.DrawString("OFF", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.DimGray, _bar.X + 59, (float)(_bar.Y + 13.5), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                        g.DrawString("OFF", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.DimGray, _bar.X + 59, (float)(_bar.Y + 13.5), new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
                     }
                     break;
                 case _Type.YesNo:
                     if (Toggled)
                     {
-                        g.DrawString("YES", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.WhiteSmoke, _bar.X + 18, (float)(_bar.Y + 13.5), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                        g.DrawString("YES", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.WhiteSmoke, _bar.X + 18, (float)(_bar.Y + 13.5), new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
                     }
                     else
                     {
-                        g.DrawString("NO", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.DimGray, _bar.X + 59, (float)(_bar.Y + 13.5), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                        g.DrawString("NO", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.DimGray, _bar.X + 59, (float)(_bar.Y + 13.5), new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
                     }
                     break;
                 case _Type.Io:
                     if (Toggled)
                     {
-                        g.DrawString("I", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.WhiteSmoke, _bar.X + 18, (float)(_bar.Y + 13.5), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                        g.DrawString("I", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.WhiteSmoke, _bar.X + 18, (float)(_bar.Y + 13.5), new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
                     }
                     else
                     {
-                        g.DrawString("O", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.DimGray, _bar.X + 59, (float)(_bar.Y + 13.5), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                        g.DrawString("O", new Font("Segoe UI", 12, FontStyle.Regular), Brushes.DimGray, _bar.X + 59, (float)(_bar.Y + 13.5), new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
                     }
                     break;
             }
@@ -1959,7 +1983,7 @@ namespace MetroHangman
             g.FillPath(switchButtonLgb, switchPath);
 
             // Draw borders
-            if (_toggled)
+            if (_toggled == true)
             {
                 g.DrawPath(new Pen(Color.FromArgb(185, 89, 55)), switchPath);
                 g.DrawPath(new Pen(Color.FromArgb(185, 89, 55)), controlPath);
@@ -1976,7 +2000,7 @@ namespace MetroHangman
     #region CheckBox
 
     [DefaultEvent("CheckedChanged")]
-    internal class AmbianceCheckBox : Control
+    class AmbianceCheckBox : Control
     {
 
         #region Variables
@@ -2031,13 +2055,13 @@ namespace MetroHangman
             base.OnClick(e);
         }
 
-        protected override void OnTextChanged(EventArgs e)
+        protected override void OnTextChanged(System.EventArgs e)
         {
             Invalidate();
             base.OnTextChanged(e);
         }
 
-        protected override void OnResize(EventArgs e)
+        protected override void OnResize(System.EventArgs e)
         {
             if (Width > 0 && Height > 0)
             {
@@ -2087,7 +2111,7 @@ namespace MetroHangman
     #region RadioButton
 
     [DefaultEvent("CheckedChanged")]
-    internal class AmbianceRadioButton : Control
+    class AmbianceRadioButton : Control
     {
 
         #region Enums
@@ -2128,7 +2152,7 @@ namespace MetroHangman
         #endregion
         #region EventArgs
 
-        protected override void OnTextChanged(EventArgs e)
+        protected override void OnTextChanged(System.EventArgs e)
         {
             Invalidate();
             base.OnTextChanged(e);
@@ -2140,7 +2164,7 @@ namespace MetroHangman
             Height = 15;
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
         {
             if (!_checked)
                 Checked = true;
@@ -2165,7 +2189,7 @@ namespace MetroHangman
 
             foreach (Control control in Parent.Controls)
             {
-                if (!ReferenceEquals(control, this) && control is AmbianceRadioButton)
+                if (!object.ReferenceEquals(control, this) && control is AmbianceRadioButton)
                 {
                     ((AmbianceRadioButton)control).Checked = false;
                 }
@@ -2211,7 +2235,7 @@ namespace MetroHangman
 
         #region  Variables
 
-        private int _startIndex;
+        private int _startIndex = 0;
         private Color _hoverSelectionColor; // VBConversions Note: Initial value cannot be assigned here since it is non-static.  Assignment has been moved to the class constructors.
 
         #endregion
@@ -2228,7 +2252,7 @@ namespace MetroHangman
                 _startIndex = value;
                 try
                 {
-                    SelectedIndex = value;
+                    base.SelectedIndex = value;
                 }
                 catch
                 {
@@ -2258,7 +2282,7 @@ namespace MetroHangman
             base.OnDrawItem(e);
             LinearGradientBrush lgb = new LinearGradientBrush(e.Bounds, Color.FromArgb(246, 132, 85), Color.FromArgb(231, 108, 57), 90.0F);
 
-            if (Convert.ToInt32(e.State & DrawItemState.Selected) == (int)DrawItemState.Selected)
+            if (System.Convert.ToInt32(e.State & DrawItemState.Selected) == (int)DrawItemState.Selected)
             {
                 if (!(e.Index == -1))
                 {
@@ -2348,8 +2372,8 @@ namespace MetroHangman
                 LineAlignment = StringAlignment.Center,
                 Alignment = StringAlignment.Far
             });
-            e.Graphics.DrawLine(new Pen(Color.FromArgb(224, 222, 220)), Width - 24, 4, Width - 24, Height - 5);
-            e.Graphics.DrawLine(new Pen(Color.FromArgb(250, 249, 249)), Width - 25, 4, Width - 25, Height - 5);
+            e.Graphics.DrawLine(new Pen(Color.FromArgb(224, 222, 220)), Width - 24, 4, Width - 24, this.Height - 5);
+            e.Graphics.DrawLine(new Pen(Color.FromArgb(250, 249, 249)), Width - 25, 4, Width - 25, this.Height - 5);
 
             gp.Dispose();
             lgb.Dispose();
@@ -2374,7 +2398,7 @@ namespace MetroHangman
         #region  Variables
 
         private GraphicsPath _shape;
-        private readonly Pen _p1;
+        private Pen _p1;
 
         private long _value;
         private long _minimum;
@@ -2383,7 +2407,7 @@ namespace MetroHangman
         private bool _keyboardNum;
         private _TextAlignment _myStringAlignment;
 
-        private readonly Timer _longPressTimer = new Timer();
+        private Timer _longPressTimer = new Timer();
 
         #endregion
         #region  Properties
@@ -2460,7 +2484,7 @@ namespace MetroHangman
         #endregion
         #region  EventArgs
 
-        protected override void OnResize(EventArgs e)
+        protected override void OnResize(System.EventArgs e)
         {
             base.OnResize(e);
             Height = 28;
@@ -2473,7 +2497,7 @@ namespace MetroHangman
             _shape.CloseAllFigures();
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
         {
             base.OnMouseMove(e);
             _xval = e.Location.X;
@@ -2487,11 +2511,11 @@ namespace MetroHangman
             {
                 Cursor = Cursors.Default;
             }
-            if (e.X > Width - 25 && e.X < Width - 10)
+            if (e.X > this.Width - 25 && e.X < this.Width - 10)
             {
                 Cursor = Cursors.Hand;
             }
-            if (e.X > Width - 44 && e.X < Width - 33)
+            if (e.X > this.Width - 44 && e.X < this.Width - 33)
             {
                 Cursor = Cursors.Hand;
             }
@@ -2499,7 +2523,7 @@ namespace MetroHangman
 
         private void ClickButton()
         {
-            if (_xval > Width - 25 && _xval < Width - 10)
+            if (_xval > this.Width - 25 && _xval < this.Width - 10)
             {
                 if (Value + 1 <= _maximum)
                 {
@@ -2508,7 +2532,7 @@ namespace MetroHangman
             }
             else
             {
-                if (_xval > Width - 44 && _xval < Width - 33)
+                if (_xval > this.Width - 44 && _xval < this.Width - 33)
                 {
                     if (Value - 1 >= _minimum)
                     {
@@ -2521,9 +2545,9 @@ namespace MetroHangman
             Invalidate();
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
+        protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
         {
-            OnMouseClick(e);
+            base.OnMouseClick(e);
             ClickButton();
             _longPressTimer.Start();
         }
@@ -2536,14 +2560,14 @@ namespace MetroHangman
         {
             ClickButton();
         }
-        protected override void OnKeyPress(KeyPressEventArgs e)
+        protected override void OnKeyPress(System.Windows.Forms.KeyPressEventArgs e)
         {
             base.OnKeyPress(e);
             try
             {
-                if (_keyboardNum)
+                if (_keyboardNum == true)
                 {
-                    _value = long.Parse(_value + e.KeyChar.ToString());
+                    _value = long.Parse(_value.ToString() + e.KeyChar.ToString().ToString());
                 }
                 if (_value > _maximum)
                 {
@@ -2555,7 +2579,7 @@ namespace MetroHangman
             }
         }
 
-        protected override void OnKeyUp(KeyEventArgs e)
+        protected override void OnKeyUp(System.Windows.Forms.KeyEventArgs e)
         {
             base.OnKeyUp(e);
             if (e.KeyCode == Keys.Back)
@@ -2615,17 +2639,17 @@ namespace MetroHangman
 
         public void Increment(int value)
         {
-            _value += value;
+            this._value += value;
             Invalidate();
         }
 
         public void Decrement(int value)
         {
-            _value -= value;
+            this._value -= value;
             Invalidate();
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
         {
             base.OnPaint(e);
             Bitmap b = new Bitmap(Width, Height);
@@ -2641,17 +2665,17 @@ namespace MetroHangman
             g.DrawPath(_p1, _shape); // Draw border
 
             g.DrawString("+", new Font("Tahoma", 14), new SolidBrush(Color.FromArgb(75, 75, 75)), new Rectangle(Width - 25, 1, 19, 30));
-            g.DrawLine(new Pen(Color.FromArgb(229, 228, 227)), Width - 28, 1, Width - 28, Height - 2);
+            g.DrawLine(new Pen(Color.FromArgb(229, 228, 227)), Width - 28, 1, Width - 28, this.Height - 2);
             g.DrawString("-", new Font("Tahoma", 14), new SolidBrush(Color.FromArgb(75, 75, 75)), new Rectangle(Width - 44, 1, 19, 30));
-            g.DrawLine(new Pen(Color.FromArgb(229, 228, 227)), Width - 48, 1, Width - 48, Height - 2);
+            g.DrawLine(new Pen(Color.FromArgb(229, 228, 227)), Width - 48, 1, Width - 48, this.Height - 2);
 
             switch (_myStringAlignment)
             {
                 case _TextAlignment.Near:
-                    g.DrawString(Convert.ToString(Value), Font, new SolidBrush(ForeColor), new Rectangle(5, 0, Width - 1, Height - 1), new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center });
+                    g.DrawString(System.Convert.ToString(Value), Font, new SolidBrush(ForeColor), new Rectangle(5, 0, Width - 1, Height - 1), new StringFormat() { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center });
                     break;
                 case _TextAlignment.Center:
-                    g.DrawString(Convert.ToString(Value), Font, new SolidBrush(ForeColor), new Rectangle(0, 0, Width - 1, Height - 1), new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                    g.DrawString(System.Convert.ToString(Value), Font, new SolidBrush(ForeColor), new Rectangle(0, 0, Width - 1, Height - 1), new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
                     break;
             }
             e.Graphics.DrawImage((Image)b.Clone(), 0, 0);
@@ -2689,12 +2713,12 @@ namespace MetroHangman
         private Size _thumbSize = new Size(15, 15);
         private Rectangle _trackThumb;
 
-        private int _minimum;
+        private int _minimum = 0;
         private int _maximum = 10;
-        private int _value;
+        private int _value = 0;
 
-        private bool _drawValueString;
-        private bool _jumpToMouse;
+        private bool _drawValueString = false;
+        private bool _jumpToMouse = false;
         private ValueDivisor _dividedValue = ValueDivisor.By1;
 
         #endregion
@@ -2753,11 +2777,11 @@ namespace MetroHangman
         {
             add
             {
-                _valueChangedEvent = (ValueChangedEventHandler)Delegate.Combine(_valueChangedEvent, value);
+                _valueChangedEvent = (ValueChangedEventHandler)System.Delegate.Combine(_valueChangedEvent, value);
             }
             remove
             {
-                _valueChangedEvent = (ValueChangedEventHandler)Delegate.Remove(_valueChangedEvent, value);
+                _valueChangedEvent = (ValueChangedEventHandler)System.Delegate.Remove(_valueChangedEvent, value);
             }
         }
 
@@ -2841,7 +2865,7 @@ namespace MetroHangman
             set
             {
                 _drawValueString = value;
-                if (_drawValueString)
+                if (_drawValueString == true)
                 {
                     Height = 35;
                 }
@@ -2861,10 +2885,10 @@ namespace MetroHangman
             base.OnMouseMove(e);
             checked
             {
-                bool flag = _cap && e.X > -1 && e.X < Width + 1;
+                bool flag = this._cap && e.X > -1 && e.X < this.Width + 1;
                 if (flag)
                 {
-                    Value = _minimum + (int)Math.Round((_maximum - _minimum) * (e.X / (double)Width));
+                    this.Value = this._minimum + (int)Math.Round((this._maximum - this._minimum) * (e.X / (double)this.Width));
                 }
             }
         }
@@ -2877,14 +2901,14 @@ namespace MetroHangman
             {
                 if (flag)
                 {
-                    _valueDrawer = (int)Math.Round((_value - _minimum) / (double)(_maximum - _minimum) * (Width - 11));
-                    _trackBarHandleRect = new Rectangle(_valueDrawer, 0, 25, 25);
-                    _cap = _trackBarHandleRect.Contains(e.Location);
-                    Focus();
-                    flag = _jumpToMouse;
+                    this._valueDrawer = (int)Math.Round((this._value - this._minimum) / (double)(this._maximum - this._minimum) * (this.Width - 11));
+                    this._trackBarHandleRect = new Rectangle(this._valueDrawer, 0, 25, 25);
+                    this._cap = this._trackBarHandleRect.Contains(e.Location);
+                    this.Focus();
+                    flag = this._jumpToMouse;
                     if (flag)
                     {
-                        Value = _minimum + (int)Math.Round((_maximum - _minimum) * (e.X / (double)Width));
+                        this.Value = this._minimum + (int)Math.Round((this._maximum - this._minimum) * (e.X / (double)this.Width));
                     }
                 }
             }
@@ -2909,7 +2933,7 @@ namespace MetroHangman
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            if (_drawValueString)
+            if (_drawValueString == true)
             {
                 Height = 35;
             }
@@ -2919,7 +2943,7 @@ namespace MetroHangman
             }
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
         {
             base.OnPaint(e);
             Graphics g = e.Graphics;
@@ -2931,7 +2955,7 @@ namespace MetroHangman
 
             try
             {
-                _valueDrawer = (int)Math.Round((_value - _minimum) / (double)(_maximum - _minimum) * (Width - 11));
+                this._valueDrawer = (int)Math.Round((this._value - this._minimum) / (double)(this._maximum - this._minimum) * (this.Width - 11));
             }
             catch (Exception)
             {
@@ -2949,12 +2973,12 @@ namespace MetroHangman
             g.DrawPath(new Pen(Color.FromArgb(200, 200, 200)), _pipeBorder); // Draw pipe border
             g.FillPath(new SolidBrush(Color.FromArgb(217, 99, 50)), _fillValue);
 
-            g.FillEllipse(new SolidBrush(Color.FromArgb(244, 244, 244)), _trackThumb.X + (int)Math.Round(_trackThumb.Width * (Value / (double)Maximum)) - (int)Math.Round(_thumbSize.Width / 2.0), _trackThumb.Y + (int)Math.Round(_trackThumb.Height / 2.0) - (int)Math.Round(_thumbSize.Height / 2.0), _thumbSize.Width, _thumbSize.Height);
-            g.DrawEllipse(new Pen(Color.FromArgb(180, 180, 180)), _trackThumb.X + (int)Math.Round(_trackThumb.Width * (Value / (double)Maximum)) - (int)Math.Round(_thumbSize.Width / 2.0), _trackThumb.Y + (int)Math.Round(_trackThumb.Height / 2.0) - (int)Math.Round(_thumbSize.Height / 2.0), _thumbSize.Width, _thumbSize.Height);
+            g.FillEllipse(new SolidBrush(Color.FromArgb(244, 244, 244)), this._trackThumb.X + (int)Math.Round(unchecked(this._trackThumb.Width * (this.Value / (double)this.Maximum))) - (int)Math.Round(this._thumbSize.Width / 2.0), this._trackThumb.Y + (int)Math.Round(this._trackThumb.Height / 2.0) - (int)Math.Round(this._thumbSize.Height / 2.0), this._thumbSize.Width, this._thumbSize.Height);
+            g.DrawEllipse(new Pen(Color.FromArgb(180, 180, 180)), this._trackThumb.X + (int)Math.Round(unchecked(this._trackThumb.Width * (this.Value / (double)this.Maximum))) - (int)Math.Round(this._thumbSize.Width / 2.0), this._trackThumb.Y + (int)Math.Round(this._trackThumb.Height / 2.0) - (int)Math.Round(this._thumbSize.Height / 2.0), this._thumbSize.Width, this._thumbSize.Height);
 
-            if (_drawValueString)
+            if (_drawValueString == true)
             {
-                g.DrawString(Convert.ToString(ValueToSet), Font, Brushes.DimGray, 1, 20);
+                g.DrawString(System.Convert.ToString(ValueToSet), Font, Brushes.DimGray, 1, 20);
             }
         }
     }
@@ -2970,12 +2994,12 @@ namespace MetroHangman
             SetStyle(ControlStyles.Opaque, false);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
         {
             Graphics g = e.Graphics;
 
-            Font = new Font("Tahoma", 9);
-            BackColor = Color.White;
+            this.Font = new Font("Tahoma", 9);
+            this.BackColor = Color.White;
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, Width, Height));
             g.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, Width - 1, Height - 1));
@@ -2987,7 +3011,7 @@ namespace MetroHangman
     #region TextBox
 
     [DefaultEvent("TextChanged")]
-    internal class AmbianceTextBox : Control
+    class AmbianceTextBox : Control
     {
         #region Variables
 
@@ -2997,9 +3021,9 @@ namespace MetroHangman
         private bool _readOnly;
         private bool _multiline;
         private HorizontalAlignment _alnType;
-        private bool _isPasswordMasked;
+        private bool _isPasswordMasked = false;
         private Pen _p1;
-        private readonly SolidBrush _b1;
+        private SolidBrush _b1;
 
         #endregion
         #region Properties
@@ -3071,7 +3095,7 @@ namespace MetroHangman
         #endregion
         #region EventArgs
 
-        protected override void OnTextChanged(EventArgs e)
+        protected override void OnTextChanged(System.EventArgs e)
         {
             base.OnTextChanged(e);
             AmbianceTb.Text = Text;
@@ -3083,14 +3107,14 @@ namespace MetroHangman
             Text = AmbianceTb.Text;
         }
 
-        protected override void OnForeColorChanged(EventArgs e)
+        protected override void OnForeColorChanged(System.EventArgs e)
         {
             base.OnForeColorChanged(e);
             AmbianceTb.ForeColor = ForeColor;
             Invalidate();
         }
 
-        protected override void OnFontChanged(EventArgs e)
+        protected override void OnFontChanged(System.EventArgs e)
         {
             base.OnFontChanged(e);
             AmbianceTb.Font = Font;
@@ -3127,7 +3151,7 @@ namespace MetroHangman
             Refresh();
         }
 
-        protected override void OnResize(EventArgs e)
+        protected override void OnResize(System.EventArgs e)
         {
             base.OnResize(e);
             if (_multiline)
@@ -3148,7 +3172,7 @@ namespace MetroHangman
             with1.CloseAllFigures();
         }
 
-        protected override void OnGotFocus(EventArgs e)
+        protected override void OnGotFocus(System.EventArgs e)
         {
             base.OnGotFocus(e);
             AmbianceTb.Focus();
@@ -3160,7 +3184,7 @@ namespace MetroHangman
             var tb = AmbianceTb;
             tb.Size = new Size(Width - 10, 33);
             tb.Location = new Point(7, 4);
-            tb.Text = string.Empty;
+            tb.Text = String.Empty;
             tb.BorderStyle = BorderStyle.None;
             tb.TextAlign = HorizontalAlignment.Left;
             tb.Font = new Font("Tahoma", 11);
@@ -3191,7 +3215,7 @@ namespace MetroHangman
             Size = new Size(135, 33);
             DoubleBuffered = true;
         }
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
         {
             base.OnPaint(e);
             Bitmap b = new Bitmap(Width, Height);
@@ -3219,7 +3243,7 @@ namespace MetroHangman
     #region RichTextBox
 
     [DefaultEvent("TextChanged")]
-    internal class AmbianceRichTextBox : Control
+    class AmbianceRichTextBox : Control
     {
 
         #region Variables
@@ -3282,14 +3306,14 @@ namespace MetroHangman
         #endregion
         #region EventArgs
 
-        protected override void OnForeColorChanged(EventArgs e)
+        protected override void OnForeColorChanged(System.EventArgs e)
         {
             base.OnForeColorChanged(e);
             AmbianceRtb.ForeColor = ForeColor;
             Invalidate();
         }
 
-        protected override void OnFontChanged(EventArgs e)
+        protected override void OnFontChanged(System.EventArgs e)
         {
             base.OnFontChanged(e);
             AmbianceRtb.Font = Font;
@@ -3299,7 +3323,7 @@ namespace MetroHangman
             base.OnPaintBackground(e);
         }
 
-        protected override void OnSizeChanged(EventArgs e)
+        protected override void OnSizeChanged(System.EventArgs e)
         {
             base.OnSizeChanged(e);
             AmbianceRtb.Size = new Size(Width - 13, Height - 11);
@@ -3317,7 +3341,7 @@ namespace MetroHangman
             Refresh();
         }
 
-        protected override void OnResize(EventArgs e)
+        protected override void OnResize(System.EventArgs e)
         {
             base.OnResize(e);
 
@@ -3350,6 +3374,7 @@ namespace MetroHangman
         }
 
         public AmbianceRichTextBox()
+            : base()
         {
 
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
@@ -3373,15 +3398,15 @@ namespace MetroHangman
             TextChanged += _TextChanged;
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
         {
             base.OnPaint(e);
-            Bitmap b = new Bitmap(Width, Height);
+            Bitmap b = new Bitmap(this.Width, this.Height);
             Graphics g = Graphics.FromImage(b);
             g.SmoothingMode = SmoothingMode.AntiAlias;
             g.Clear(Color.Transparent);
-            g.FillPath(Brushes.White, _shape);
-            g.DrawPath(_p1, _shape);
+            g.FillPath(Brushes.White, this._shape);
+            g.DrawPath(_p1, this._shape);
             g.Dispose();
             e.Graphics.DrawImage((Image)b.Clone(), 0, 0);
             b.Dispose();
@@ -3396,8 +3421,8 @@ namespace MetroHangman
 
         public AmbianceListBox()
         {
-            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
-            DrawMode = DrawMode.OwnerDrawFixed;
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
+            this.DrawMode = DrawMode.OwnerDrawFixed;
             IntegralHeight = false;
             ItemHeight = 18;
             Font = new Font("Seoge UI", 11, FontStyle.Regular);
@@ -3408,17 +3433,20 @@ namespace MetroHangman
             base.OnDrawItem(e);
             e.DrawBackground();
             LinearGradientBrush lgb = new LinearGradientBrush(e.Bounds, Color.FromArgb(246, 132, 85), Color.FromArgb(231, 108, 57), 90.0F);
-            if (Convert.ToInt32(e.State & DrawItemState.Selected) == (int)DrawItemState.Selected)
+            if (System.Convert.ToInt32(e.State & DrawItemState.Selected) == (int)DrawItemState.Selected)
             {
                 e.Graphics.FillRectangle(lgb, e.Bounds);
             }
             using (SolidBrush b = new SolidBrush(e.ForeColor))
             {
-                if (Items.Count == 0)
+                if (base.Items.Count == 0)
                 {
                     return;
                 }
-                e.Graphics.DrawString(GetItemText(Items[e.Index]), e.Font, b, e.Bounds);
+                else
+                {
+                    e.Graphics.DrawString(base.GetItemText(base.Items[e.Index]), e.Font, b, e.Bounds);
+                }
             }
 
             lgb.Dispose();
@@ -3427,22 +3455,22 @@ namespace MetroHangman
         {
             base.OnPaint(e);
             Region myRegion = new Region(e.ClipRectangle);
-            e.Graphics.FillRegion(new SolidBrush(BackColor), myRegion);
+            e.Graphics.FillRegion(new SolidBrush(this.BackColor), myRegion);
 
-            if (Items.Count > 0)
+            if (this.Items.Count > 0)
             {
-                for (int i = 0; i <= Items.Count - 1; i++)
+                for (int i = 0; i <= this.Items.Count - 1; i++)
                 {
-                    Rectangle regionRect = GetItemRectangle(i);
+                    System.Drawing.Rectangle regionRect = this.GetItemRectangle(i);
                     if (e.ClipRectangle.IntersectsWith(regionRect))
                     {
-                        if ((SelectionMode == SelectionMode.One && SelectedIndex == i) || (SelectionMode == SelectionMode.MultiSimple && SelectedIndices.Contains(i)) || (SelectionMode == SelectionMode.MultiExtended && SelectedIndices.Contains(i)))
+                        if ((this.SelectionMode == SelectionMode.One && this.SelectedIndex == i) || (this.SelectionMode == SelectionMode.MultiSimple && this.SelectedIndices.Contains(i)) || (this.SelectionMode == SelectionMode.MultiExtended && this.SelectedIndices.Contains(i)))
                         {
-                            OnDrawItem(new DrawItemEventArgs(e.Graphics, Font, regionRect, i, DrawItemState.Selected, ForeColor, BackColor));
+                            OnDrawItem(new DrawItemEventArgs(e.Graphics, this.Font, regionRect, i, DrawItemState.Selected, this.ForeColor, this.BackColor));
                         }
                         else
                         {
-                            OnDrawItem(new DrawItemEventArgs(e.Graphics, Font, regionRect, i, DrawItemState.Default, Color.FromArgb(60, 60, 60), BackColor));
+                            OnDrawItem(new DrawItemEventArgs(e.Graphics, this.Font, regionRect, i, DrawItemState.Default, Color.FromArgb(60, 60, 60), this.BackColor));
                         }
                         myRegion.Complement(regionRect);
                     }
@@ -3520,5 +3548,4 @@ namespace MetroHangman
     }
 
     #endregion
-
 }

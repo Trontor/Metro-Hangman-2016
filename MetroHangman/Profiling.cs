@@ -16,16 +16,12 @@
 
         public static string GetWins(bool common)
         {
-            if (common)
-            return Properties.Settings.Default.commonwins.ToString();
-            return Properties.Settings.Default.hardwins.ToString();
+            return common ? Properties.Settings.Default.commonwins.ToString() : Properties.Settings.Default.hardwins.ToString();
         }
 
         public static string GetLosses(bool common)
         {
-            if (common)
-                return Properties.Settings.Default.commonlosses.ToString();
-            return Properties.Settings.Default.hardlosses.ToString();
+            return common ? Properties.Settings.Default.commonlosses.ToString() : Properties.Settings.Default.hardlosses.ToString();
         }
 
         public static void ResetStatistics()

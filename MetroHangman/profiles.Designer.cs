@@ -174,14 +174,10 @@ namespace MetroHangman
             this.btn_resetStatistics.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.btn_resetStatistics.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_resetStatistics.BackgroundImage")));
             this.btn_resetStatistics.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btn_resetStatistics.BorderColors = false;
             this.btn_resetStatistics.Location = new System.Drawing.Point(0, 211);
             this.btn_resetStatistics.Name = "btn_resetStatistics";
             this.btn_resetStatistics.Size = new System.Drawing.Size(30, 30);
             this.btn_resetStatistics.TabIndex = 61;
-            this.btn_resetStatistics.UseCustomBackColor = true;
-            this.btn_resetStatistics.UseSelectable = true;
-            this.btn_resetStatistics.UseStyleColors = true;
             this.btn_resetStatistics.Click += new System.EventHandler(this.btn_resetStatistics_Click);
             // 
             // profiles

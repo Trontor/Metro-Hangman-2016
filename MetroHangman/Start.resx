@@ -131,17 +131,6 @@
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>157</value>
   </metadata>
-  <data name="btn_Settings.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAVFJREFUSEu9
-        lYFxwjAMRTMCIzACI7BB2aCM0BEYgQ3KBmWDskHYoGzQbpD+Z8tHbMu5tgl9d/8ulr4VE2S7+ynDMJyk
-        d9PBwsugghupZG3p36GJFFvZMKAxqy85Wjqg8Vra2NBHhj0zjTdpKxH7JFBA7FnaSXy2xN7K5SiBcSl2
-        VvaOguPVz8V9wUr6Cul53KxkjZKH6JlFu4VJRk/FVeI/4lcinol5vFi5OwrSmq+S1y1Xs1WQi5YMalBr
-        m0wXohNEowO5aGnSY5rEajUxW5N/eUHrz0rM+USXsZHzxtsHfTA5KOctjhrUqs8lBVtt2ktPUmpTnj8k
-        j7pNE0o+fKPdomcW7IPsuA8ouORpWh/ZCj72uAYlxkc2O5yXEvO6ixg5OvBMwPAvnIQMnEvZfavxkZkF
-        J0sHNKa7pq/MFprIfVvyt2ItVJAW5rOhbPVtuu4b6Th+mG69LAMAAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAYAEBAAAAAAIABoBAAAZgAAACAgAAAAACAAqBAAAM4EAAAwMAAAAAAgAKglAAB2FQAAQEAAAAAA
@@ -6314,10 +6303,21 @@
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
 </value>
   </data>
-  <metadata name="tmr_Disco.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>939, 56</value>
-  </metadata>
   <metadata name="tmr_Theme.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>1045, 56</value>
+    <value>934, 56</value>
+  </metadata>
+  <data name="btn_Settings.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAVFJREFUSEu9
+        lYFxwjAMRTMCIzACI7BB2aCM0BEYgQ3KBmWDskHYoGzQbpD+Z8tHbMu5tgl9d/8ulr4VE2S7+ynDMJyk
+        d9PBwsugghupZG3p36GJFFvZMKAxqy85Wjqg8Vra2NBHhj0zjTdpKxH7JFBA7FnaSXy2xN7K5SiBcSl2
+        VvaOguPVz8V9wUr6Cul53KxkjZKH6JlFu4VJRk/FVeI/4lcinol5vFi5OwrSmq+S1y1Xs1WQi5YMalBr
+        m0wXohNEowO5aGnSY5rEajUxW5N/eUHrz0rM+USXsZHzxtsHfTA5KOctjhrUqs8lBVtt2ktPUmpTnj8k
+        j7pNE0o+fKPdomcW7IPsuA8ouORpWh/ZCj72uAYlxkc2O5yXEvO6ixg5OvBMwPAvnIQMnEvZfavxkZkF
+        J0sHNKa7pq/MFprIfVvyt2ItVJAW5rOhbPVtuu4b6Th+mG69LAMAAAAASUVORK5CYII=
+</value>
+  </data>
+  <metadata name="tmr_Disco.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>1047, 56</value>
   </metadata>
 </root>

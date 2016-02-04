@@ -56,10 +56,10 @@ namespace MetroHangman
             this.metroLabel6 = new MetroFramework.Controls.MetroLabel();
             this.btn_Start = new MetroFramework.Controls.MetroButton();
             this.styleManager = new MetroFramework.Components.MetroStyleManager(this.components);
-            this.tmr_Disco = new System.Windows.Forms.Timer(this.components);
-            this.ambiance_Separator1 = new MetroHangman.AmbianceSeparator();
             this.tmr_Theme = new System.Windows.Forms.Timer(this.components);
             this.btn_Settings = new MetroFramework.Controls.MetroButton();
+            this.ambiance_Separator1 = new MetroHangman.AmbianceSeparator();
+            this.tmr_Disco = new System.Windows.Forms.Timer(this.components);
             this.pnl_MultiOptions.SuspendLayout();
             this.pnl_MultiDisplayer.SuspendLayout();
             this.pnl_wordPacks.SuspendLayout();
@@ -85,9 +85,9 @@ namespace MetroHangman
             this.metroLabel1.FontWeight = MetroFramework.MetroLabelWeight.Regular;
             this.metroLabel1.Location = new System.Drawing.Point(36, 60);
             this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(296, 25);
+            this.metroLabel1.Size = new System.Drawing.Size(309, 25);
             this.metroLabel1.TabIndex = 47;
-            this.metroLabel1.Text = "Welcome to Rohyl\'s Hangman 2015";
+            this.metroLabel1.Text = "Welcome to Trontor\'s Hangman 2015";
             this.metroLabel1.UseStyleColors = true;
             // 
             // metroLabel2
@@ -299,22 +299,10 @@ namespace MetroHangman
             // 
             this.styleManager.Owner = this;
             // 
-            // tmr_Disco
-            // 
-            this.tmr_Disco.Interval = 1000;
-            // 
-            // ambiance_Separator1
-            // 
-            this.ambiance_Separator1.Location = new System.Drawing.Point(22, 107);
-            this.ambiance_Separator1.Name = "ambiance_Separator1";
-            this.ambiance_Separator1.Size = new System.Drawing.Size(326, 10);
-            this.ambiance_Separator1.TabIndex = 31;
-            this.ambiance_Separator1.Text = "ambiance_Separator1";
-            // 
             // tmr_Theme
             // 
             this.tmr_Theme.Enabled = true;
-            this.tmr_Theme.Interval = 1000;
+            this.tmr_Theme.Interval = 1;
             this.tmr_Theme.Tick += new System.EventHandler(this.tmr_Theme_Tick);
             // 
             // btn_Settings
@@ -332,6 +320,20 @@ namespace MetroHangman
             this.btn_Settings.UseStyleColors = true;
             this.btn_Settings.UseVisualStyleBackColor = false;
             this.btn_Settings.Click += new System.EventHandler(this.btn_Settings_Click);
+            // 
+            // ambiance_Separator1
+            // 
+            this.ambiance_Separator1.Location = new System.Drawing.Point(22, 107);
+            this.ambiance_Separator1.Name = "ambiance_Separator1";
+            this.ambiance_Separator1.Size = new System.Drawing.Size(326, 10);
+            this.ambiance_Separator1.TabIndex = 31;
+            this.ambiance_Separator1.Text = "ambiance_Separator1";
+            // 
+            // tmr_Disco
+            // 
+            this.tmr_Disco.Enabled = true;
+            this.tmr_Disco.Interval = 1000;
+            this.tmr_Disco.Tick += new System.EventHandler(this.tmr_Disco_Tick);
             // 
             // Start
             // 
@@ -401,9 +403,9 @@ namespace MetroHangman
         private MetroRadioButton rad_Common;
         private MetroRadioButton rad_Hard;
         private MetroStyleManager styleManager;
-        private Timer tmr_Disco;
         private Timer tmr_Theme;
         private MetroButton btn_Settings;
+        private Timer tmr_Disco;
     }
 }
 

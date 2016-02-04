@@ -56,7 +56,6 @@ namespace MetroHangman
             this.def.Size = new System.Drawing.Size(290, 125);
             this.def.TabIndex = 1;
             this.def.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.def.WrapToLine = true;
             // 
             // metroButton1
             // 
@@ -65,7 +64,6 @@ namespace MetroHangman
             this.metroButton1.Size = new System.Drawing.Size(97, 23);
             this.metroButton1.TabIndex = 2;
             this.metroButton1.Text = "VIEW ONLINE";
-            this.metroButton1.UseSelectable = true;
             this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
             // 
             // htmlPanel1
@@ -87,7 +85,6 @@ namespace MetroHangman
             this.spinner.Name = "spinner";
             this.spinner.Size = new System.Drawing.Size(64, 64);
             this.spinner.TabIndex = 0;
-            this.spinner.UseSelectable = true;
             this.spinner.Value = 75;
             // 
             // Definition
