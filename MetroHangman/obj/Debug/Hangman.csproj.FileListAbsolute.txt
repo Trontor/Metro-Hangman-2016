@@ -64,3 +64,4 @@ C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\
 C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.exe
 C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\MetroHangman.pdb
 C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\bin\Debug\MetroFramework.Fonts.dll
+C:\Users\Rohyl Joshi\Documents\GitHub\Metro-Hangman-2016\MetroHangman\obj\Debug\Hangman.csprojResolveAssemblyReference.cache

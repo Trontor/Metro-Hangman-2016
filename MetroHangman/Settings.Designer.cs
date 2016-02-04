@@ -127,7 +127,6 @@ namespace MetroHangman
             // tmr_Theme
             // 
             this.tmr_Theme.Enabled = true;
-            this.tmr_Theme.Interval = 1;
             this.tmr_Theme.Tick += new System.EventHandler(this.tmr_Theme_Tick);
             // 
             // metroStyleManager1

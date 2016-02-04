@@ -40,9 +40,19 @@ namespace MetroHangman
 
         private void SetCurrentStyle()
         {
-            Style = Properties.Settings.Default.Theme;
-            btn_Color.BackColor = (Color)typeof(MetroColors).GetMethod("get_" + Properties.Settings.Default.Theme.ToString()).Invoke(new MetroColors(), null);
-            StyleManager.Style = Properties.Settings.Default.Theme;
+            try
+            {
+                Style = Properties.Settings.Default.Theme;
+                btn_Color.BackColor =
+                    (Color)
+                        typeof (MetroColors).GetMethod("get_" + Properties.Settings.Default.Theme.ToString())
+                            .Invoke(new MetroColors(), null);
+                StyleManager.Style = Properties.Settings.Default.Theme;
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         private void tmr_Theme_Tick(object sender, EventArgs e)
